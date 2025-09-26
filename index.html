@@ -1,70 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoboHub Login Test</title>
-<style>
-body { font-family: Arial; margin:0; padding:0; background:#f0f4f8; }
-#loginScreen { display:flex; justify-content:center; align-items:center; height:100vh; background:#e0e7ff; }
-#loginCard { background:white; padding:40px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); text-align:center; width:300px; }
-#loginCard input { width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px; font-size:16px; }
-#loginCard button { width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:5px; font-size:16px; cursor:pointer; }
-#errorMsg { color:red; font-size:14px; height:18px; margin-bottom:10px; }
-#mainApp { display:none; padding:20px; }
-</style>
-</head>
+<html>
+<head><title>Test</title></head>
 <body>
-
-<div id="loginScreen">
-  <div id="loginCard">
-    <h2>RoboHub Login</h2>
-    <input type="text" id="username" placeholder="Enter username">
-    <div id="errorMsg"></div>
-    <button onclick="signIn()">Sign In</button>
-  </div>
-</div>
-
-<div id="mainApp">
-  <h2>Welcome to RoboHub!</h2>
-  <button onclick="logOut()">Log Out</button>
-</div>
-
-<script>
-const loginScreen = document.getElementById('loginScreen');
-const mainApp = document.getElementById('mainApp');
-
-function signIn(){
-  const username = document.getElementById('username').value.trim();
-  const errorDiv = document.getElementById('errorMsg');
-  if(username){
-    localStorage.setItem('username', username);
-    loginScreen.style.display = 'none';
-    mainApp.style.display = 'block';
-  } else {
-    errorDiv.textContent = 'Please enter a username';
-  }
-}
-
-function logOut(){
-  localStorage.removeItem('username');
-  document.getElementById('username').value = '';
-  loginScreen.style.display = 'flex';
-  mainApp.style.display = 'none';
-}
-
-// On page load, show login or main app
-window.onload = function(){
-  const username = localStorage.getItem('username');
-  if(username){
-    loginScreen.style.display = 'none';
-    mainApp.style.display = 'block';
-  } else {
-    loginScreen.style.display = 'flex';
-    mainApp.style.display = 'none';
-  }
-};
-</script>
-
+<h1>Hello, RoboHub!</h1>
 </body>
 </html>
