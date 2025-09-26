@@ -3,207 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoboHub 🤖</title>
+<title>RoboHub Login Test</title>
 <style>
 body { font-family: Arial; margin:0; padding:0; background:#f0f4f8; }
-#loginScreen, #mainApp { display:none; }
-header { background:#007bff; color:white; padding:20px; text-align:center; font-size:24px; }
-#welcomeMsg { text-align:center; font-size:18px; margin:10px 0; color:#333; }
-ul { list-style:none; padding:0; }
-li { background:white; margin:10px 0; padding:10px; border-radius:8px; cursor:pointer; transition: background 0.2s; }
-li:hover { background-color:#f0f8ff; }
-.completed { text-decoration: line-through; opacity:0.5; background-color:#d4edda; }
-button { padding:10px 15px; margin:5px; border:none; border-radius:5px; cursor:pointer; }
-.btn-upload { background:#28a745; color:white; }
-.btn-add { background:#ffc107; color:black; }
-.btn-check { background:#17a2b8; color:white; }
-.btn-inventory { background:#6f42c1; color:white; }
-/* Polished login card */
 #loginScreen { display:flex; justify-content:center; align-items:center; height:100vh; background:#e0e7ff; }
 #loginCard { background:white; padding:40px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); text-align:center; width:300px; }
 #loginCard input { width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px; font-size:16px; }
 #loginCard button { width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:5px; font-size:16px; cursor:pointer; }
 #errorMsg { color:red; font-size:14px; height:18px; margin-bottom:10px; }
-#logoutBtn { display:block; margin:5px auto; padding:8px 12px; background:#dc3545; color:white; border:none; border-radius:5px; cursor:pointer; }
+#mainApp { display:none; padding:20px; }
 </style>
 </head>
 <body>
 
-<!-- Login Screen -->
 <div id="loginScreen">
   <div id="loginCard">
-    <h2 style="margin-bottom:20px;color:#007bff;">RoboHub Login</h2>
+    <h2>RoboHub Login</h2>
     <input type="text" id="username" placeholder="Enter username">
     <div id="errorMsg"></div>
     <button onclick="signIn()">Sign In</button>
   </div>
 </div>
 
-<!-- Main App -->
 <div id="mainApp">
-<header>RoboHub 🤖</header>
-<div id="welcomeMsg"></div>
-<button id="logoutBtn" onclick="logOut()">Log Out</button>
-
-<section>
-<h2>Inventory</h2>
-<ul id="inventory"></ul>
-<button class="btn-inventory" onclick="addInventory()">Add Inventory</button>
-</section>
-
-<section>
-<h2>Task Board</h2>
-<ul id="tasks"></ul>
-<button class="btn-add" onclick="addTask()">Add Task</button>
-</section>
-
-<section>
-<button class="btn-upload" onclick="alert('Upload Design clicked!')">Upload Design</button>
-<button class="btn-check" onclick="checkInventory()">Check Inventory</button>
-</section>
-
+  <h2>Welcome to RoboHub!</h2>
+  <button onclick="logOut()">Log Out</button>
 </div>
 
 <script>
 const loginScreen = document.getElementById('loginScreen');
 const mainApp = document.getElementById('mainApp');
-const inventoryList = document.getElementById('inventory');
-const tasksList = document.getElementById('tasks');
 
-// Load or initialize data
-let inventory = JSON.parse(localStorage.getItem('inventory')) || { Servo:3, Motor:5, Sensors:7 };
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [
-  "Build chassis (Jacob)",
-  "Wire motors (Kevin)"
-];
-
-// Save to localStorage
-function saveData() {
-  localStorage.setItem('inventory', JSON.stringify(inventory));
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-}
-
-// Update Inventory UI
-function updateInventoryUI() {
-  inventoryList.innerHTML='';
-  for(let item in inventory){
-    const li = document.createElement('li');
-    li.textContent = `${item} (${inventory[item]})`;
-    inventoryList.appendChild(li);
-  }
-}
-
-// Update Tasks UI
-function updateTasksUI() {
-  tasksList.innerHTML='';
-  tasks.forEach((task,index)=>{
-    const li=document.createElement('li');
-    li.textContent=task;
-    
-    if(task.endsWith('✅')) li.classList.add('completed');
-    
-    li.onclick = () => completeTask(index);
-    tasksList.appendChild(li);
-  });
-}
-
-// Show welcome message
-function showWelcome(){
-  const welcomeDiv = document.getElementById('welcomeMsg');
-  const username = localStorage.getItem('username') || '';
-  welcomeDiv.textContent = username ? `Welcome, ${username}!` : '';
-}
-
-// Sign in
 function signIn(){
   const username = document.getElementById('username').value.trim();
   const errorDiv = document.getElementById('errorMsg');
   if(username){
-    errorDiv.textContent='';
     localStorage.setItem('username', username);
-    loginScreen.style.display='none';
-    mainApp.style.display='block';
-    showWelcome();
-    updateInventoryUI();
-    updateTasksUI();
+    loginScreen.style.display = 'none';
+    mainApp.style.display = 'block';
   } else {
-    errorDiv.textContent='Please enter a username';
+    errorDiv.textContent = 'Please enter a username';
   }
 }
 
-// Enter key submission
-document.getElementById('username').addEventListener('keypress', function(e){
-  if(e.key==='Enter') signIn();
-});
-
-// Log Out function
 function logOut(){
-  if(confirm("Are you sure you want to log out?")){
-    localStorage.removeItem('username');
-    loginScreen.style.display='flex';
-    mainApp.style.display='none';
-    document.getElementById('username').value = '';
-  }
+  localStorage.removeItem('username');
+  document.getElementById('username').value = '';
+  loginScreen.style.display = 'flex';
+  mainApp.style.display = 'none';
 }
 
-// Add Task
-function addTask(){
-  const task = prompt('Enter new task (format: Task Name (Person))');
-  if(task){
-    tasks.push(task);
-    saveData();
-    updateTasksUI();
-  }
-}
-
-// Complete task
-function completeTask(index){
-  const task = tasks[index];
-  if(!task.endsWith('✅') && confirm(`Mark "${task}" complete?`)){
-    if(task.toLowerCase().includes('motor')) inventory.Motor = Math.max(0, inventory.Motor-1);
-    if(task.toLowerCase().includes('servo')) inventory.Servo = Math.max(0, inventory.Servo-1);
-    if(task.toLowerCase().includes('sensor')) inventory.Sensors = Math.max(0, inventory.Sensors-1);
-    
-    tasks[index] += ' ✅';
-    saveData();
-    updateInventoryUI();
-    updateTasksUI();
-  }
-}
-
-// Check inventory
-function checkInventory(){
-  let message="Current Inventory:\n";
-  for(let item in inventory) message+=`${item}: ${inventory[item]}\n`;
-  alert(message);
-}
-
-// Add inventory
-function addInventory(){
-  const item = prompt('Item name to add:');
-  const qty = parseInt(prompt('Quantity:'),10);
-  if(item && !isNaN(qty)){
-    if(inventory[item]) inventory[item]+=qty;
-    else inventory[item]=qty;
-    saveData();
-    updateInventoryUI();
-  }
-}
-
-// On page load, show login if no username
-document.addEventListener('DOMContentLoaded', function(){
+// On page load, show login or main app
+window.onload = function(){
   const username = localStorage.getItem('username');
   if(username){
-    loginScreen.style.display='none';
-    mainApp.style.display='block';
-    showWelcome();
-    updateInventoryUI();
-    updateTasksUI();
+    loginScreen.style.display = 'none';
+    mainApp.style.display = 'block';
   } else {
-    loginScreen.style.display='flex';
-    mainApp.style.display='none';
+    loginScreen.style.display = 'flex';
+    mainApp.style.display = 'none';
   }
-});
+};
 </script>
 
 </body>
