@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoboHub 🤖</title>
+<style>
+  body { font-family: Arial; margin: 0; padding: 0; background: #f0f4f8; }
+  #loginScreen, #mainApp { display: none; padding: 20px; }
+  header { background: #007bff; color: white; padding: 20px; text-align: center; font-size: 24px; }
+  ul { list-style: none; padding: 0; }
+  li { background: white; margin: 10px 0; padding: 10px; border-radius: 8px; }
+  button { padding: 10px 15px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+  .btn-upload { background: #28a745; color: white; }
+  .btn-add { background: #ffc107; color: black; }
+  .btn-check { background: #17a2b8; color: white; }
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <h2>Sign In</h2>
+  <input type="text" id="username" placeholder="Username"><br><br>
+  <button onclick="signIn()">Sign In</button>
+</div>
+
+<div id="mainApp">
+  <header>RoboHub 🤖</header>
+  <section>
+    <h2>Inventory</h2>
+    <ul id="inventory"></ul>
+  </section>
+  <section>
+    <h2>Task Board</h2>
+    <ul id="tasks"></ul>
+  </section>
+  <section>
+    <button class="btn-upload" onclick="alert('Upload Design clicked!')">Upload Design</button>
+    <button class="btn-add" onclick="addTask()">Add Task</button>
+    <button class="btn-check" onclick="checkInventory()">Check Inventory</button>
+  </section>
+</div>
+
+<script>
+  const loginScreen = document.getElementById('loginScreen');
+  const mainApp = document.getElementById('mainApp');
+  const inventoryList = document.getElementById('inventory');
+  const tasksList = document.getElementById('tasks');
+
+  // Initial data
+  let inventory = { Servo: 3, Motor: 5, Sensors: 7 };
+  let tasks = [
+    "Build chassis (Jacob)",
+    "Wire motors (Kevin)"
+  ];
+
+  function updateInventoryUI() {
+    inventoryList.innerHTML = '';
+    for (let item in inventory) {
+      const li = document.createElement('li');
+      li.textContent = `${item} (${inventory[item]})`;
+      inventoryList.appendChild(li);
+    }
+  }
+
+  function updateTasksUI() {
+    tasksList.innerHTML = '';
+    tasks.forEach(task => {
+      const li = document.createElement('li');
+      li.textContent = task;
+      tasksList.appendChild(li);
+    });
+  }
+
+  // Show login screen on load
+  loginScreen.style.display = 'block';
+
+  function signIn() {
+    const username = document.getElementById('username').value;
+    if (username) {
+      loginScreen.style.display = 'none';
+      mainApp.style.display = 'block';
+      updateInventoryUI();
+      updateTasksUI();
+    } else {
+      alert('Please enter a username');
+    }
+  }
+
+  function addTask() {
+    const task = prompt('Enter new task (format: Task Name (Person))');
+    if (task) {
+      tasks.push(task);
+      updateTasksUI();
+    }
+  }
+
+  function checkInventory() {
+    let message = "Current Inventory:\n";
+    for (let item in inventory) {
+      message += `${item}: ${inventory[item]}\n`;
+    }
+    alert(message);
+  }
+</script>
+
+</body>
+</html>
