@@ -3,16 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoboHub Login</title>
+<title>RoboHub 🤖</title>
 <style>
-body { font-family: Arial; margin:0; padding:0; background:#f0f4f8; }
-#loginScreen { display:flex; justify-content:center; align-items:center; height:100vh; background:#e0e7ff; }
-#loginCard { background:white; padding:40px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); text-align:center; width:300px; }
-#loginCard input { width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px; font-size:16px; }
-#loginCard button { width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:5px; font-size:16px; cursor:pointer; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; padding:0; background:#f2f6fc; }
+#loginScreen, #mainApp { display:none; }
+header { background:#0052cc; color:white; padding:20px; text-align:center; font-size:26px; box-shadow:0 4px 6px rgba(0,0,0,0.1); }
+#welcomeMsg { text-align:center; font-size:18px; margin:15px 0; color:#333; }
+ul { list-style:none; padding:0; margin:0; }
+li { background:white; margin:10px; padding:12px; border-radius:12px; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.1); transition: transform 0.1s, background 0.2s; }
+li:hover { transform:scale(1.02); background-color:#e6f7ff; }
+.completed { text-decoration: line-through; opacity:0.6; background-color:#d4edda; }
+button { padding:12px 18px; margin:5px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; transition: transform 0.1s, opacity 0.2s; }
+button:hover { transform:scale(1.05); opacity:0.9; }
+.btn-upload { background:#28a745; color:white; }
+.btn-add { background:#ffc107; color:#333; }
+.btn-check { background:#17a2b8; color:white; }
+.btn-inventory { background:#6f42c1; color:white; }
+#loginScreen { display:flex; justify-content:center; align-items:center; height:100vh; background:#e0ebff; }
+#loginCard { background:white; padding:40px; border-radius:15px; box-shadow:0 6px 20px rgba(0,0,0,0.2); text-align:center; width:90%; max-width:350px; }
+#loginCard input { width:100%; padding:12px; margin-bottom:12px; border:1px solid #ccc; border-radius:8px; font-size:16px; }
+#loginCard button { width:100%; padding:12px; background:#0052cc; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer; font-weight:bold; }
 #errorMsg { color:red; font-size:14px; height:18px; margin-bottom:10px; }
-#mainApp { display:none; padding:20px; }
-#logoutBtn { display:block; margin:10px auto; padding:8px 12px; background:#dc3545; color:white; border:none; border-radius:5px; cursor:pointer; }
+#logoutBtn { display:block; margin:10px auto; padding:10px 14px; background:#dc3545; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold; }
+section { padding:0 15px 20px 15px; }
+h2 { color:#0052cc; margin-top:20px; }
+@media (max-width: 500px) {
+  li { margin:8px 0; padding:10px; font-size:14px; }
+  button { padding:10px 14px; font-size:14px; }
+}
 </style>
 </head>
 <body>
@@ -29,44 +47,165 @@ body { font-family: Arial; margin:0; padding:0; background:#f0f4f8; }
 
 <!-- Main App -->
 <div id="mainApp">
-  <h2>Welcome to RoboHub!</h2>
-  <button id="logoutBtn" onclick="logOut()">Log Out</button>
+<header>RoboHub 🤖</header>
+<div id="welcomeMsg"></div>
+<button id="logoutBtn" onclick="logOut()">Log Out</button>
+
+<section>
+<h2>Inventory</h2>
+<ul id="inventory"></ul>
+<button class="btn-inventory" onclick="addInventory()">Add Inventory</button>
+</section>
+
+<section>
+<h2>Task Board</h2>
+<ul id="tasks"></ul>
+<button class="btn-add" onclick="addTask()">Add Task</button>
+</section>
+
+<section>
+<button class="btn-upload" onclick="alert('Upload Design clicked!')">Upload Design</button>
+<button class="btn-check" onclick="checkInventory()">Check Inventory</button>
+</section>
+
 </div>
 
 <script>
+// Elements
 const loginScreen = document.getElementById('loginScreen');
 const mainApp = document.getElementById('mainApp');
+const inventoryList = document.getElementById('inventory');
+const tasksList = document.getElementById('tasks');
 
-// Sign in function
+// Initialize data
+let inventory = JSON.parse(localStorage.getItem('inventory')) || { Servo:3, Motor:5, Sensors:7 };
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [
+  "Build chassis (Jacob)",
+  "Wire motors (Kevin)"
+];
+
+// Save to localStorage
+function saveData() {
+  localStorage.setItem('inventory', JSON.stringify(inventory));
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// Update inventory UI
+function updateInventoryUI() {
+  inventoryList.innerHTML='';
+  for(let item in inventory){
+    const li = document.createElement('li');
+    li.textContent = `${item} (${inventory[item]})`;
+    inventoryList.appendChild(li);
+  }
+}
+
+// Update tasks UI
+function updateTasksUI() {
+  tasksList.innerHTML='';
+  tasks.forEach((task,index)=>{
+    const li=document.createElement('li');
+    li.textContent=task;
+    if(task.endsWith('✅')) li.classList.add('completed');
+    li.onclick = () => completeTask(index);
+    tasksList.appendChild(li);
+  });
+}
+
+// Welcome message
+function showWelcome(){
+  const welcomeDiv = document.getElementById('welcomeMsg');
+  const username = localStorage.getItem('username') || '';
+  welcomeDiv.textContent = username ? `Welcome, ${username}!` : '';
+}
+
+// Sign in
 function signIn(){
   const username = document.getElementById('username').value.trim();
   const errorDiv = document.getElementById('errorMsg');
   if(username){
+    errorDiv.textContent='';
     localStorage.setItem('username', username);
-    loginScreen.style.display = 'none';
-    mainApp.style.display = 'block';
+    loginScreen.style.display='none';
+    mainApp.style.display='block';
+    showWelcome();
+    updateInventoryUI();
+    updateTasksUI();
   } else {
-    errorDiv.textContent = 'Please enter a username';
+    errorDiv.textContent='Please enter a username';
   }
 }
 
-// Log out function
+// Log out
 function logOut(){
   localStorage.removeItem('username');
-  document.getElementById('username').value = '';
-  loginScreen.style.display = 'flex';
-  mainApp.style.display = 'none';
+  document.getElementById('username').value='';
+  loginScreen.style.display='flex';
+  mainApp.style.display='none';
+}
+
+// Add Task with inventory suggestion
+function addTask(){
+  const task = prompt('Enter new task (format: Task Name (Person))');
+  if(task){
+    let suggested = [];
+    if(task.toLowerCase().includes('motor')) suggested.push('Motor');
+    if(task.toLowerCase().includes('servo')) suggested.push('Servo');
+    if(task.toLowerCase().includes('sensor')) suggested.push('Sensors');
+    if(suggested.length>0){
+      alert(`Suggested inventory items for this task: ${suggested.join(', ')}`);
+    }
+    tasks.push(task);
+    saveData();
+    updateTasksUI();
+  }
+}
+
+// Complete task
+function completeTask(index){
+  const task = tasks[index];
+  if(!task.endsWith('✅') && confirm(`Mark "${task}" complete?`)){
+    if(task.toLowerCase().includes('motor')) inventory.Motor = Math.max(0, inventory.Motor-1);
+    if(task.toLowerCase().includes('servo')) inventory.Servo = Math.max(0, inventory.Servo-1);
+    if(task.toLowerCase().includes('sensor')) inventory.Sensors = Math.max(0, inventory.Sensors-1);
+    tasks[index] += ' ✅';
+    saveData();
+    updateInventoryUI();
+    updateTasksUI();
+  }
+}
+
+// Check inventory
+function checkInventory(){
+  let message="Current Inventory:\n";
+  for(let item in inventory) message+=`${item}: ${inventory[item]}\n`;
+  alert(message);
+}
+
+// Add inventory
+function addInventory(){
+  const item = prompt('Item name to add:');
+  const qty = parseInt(prompt('Quantity:'),10);
+  if(item && !isNaN(qty)){
+    if(inventory[item]) inventory[item]+=qty;
+    else inventory[item]=qty;
+    saveData();
+    updateInventoryUI();
+  }
 }
 
 // On page load
 window.onload = function(){
   const username = localStorage.getItem('username');
   if(username){
-    loginScreen.style.display = 'none';
-    mainApp.style.display = 'block';
+    loginScreen.style.display='none';
+    mainApp.style.display='block';
+    showWelcome();
+    updateInventoryUI();
+    updateTasksUI();
   } else {
-    loginScreen.style.display = 'flex';
-    mainApp.style.display = 'none';
+    loginScreen.style.display='flex';
+    mainApp.style.display='none';
   }
 };
 </script>
