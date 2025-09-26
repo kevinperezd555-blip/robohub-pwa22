@@ -100,10 +100,8 @@ function updateTasksUI() {
     const li=document.createElement('li');
     li.textContent=task;
     
-    // Apply completed style if task ends with ✅
     if(task.endsWith('✅')) li.classList.add('completed');
     
-    // Click to complete task
     li.onclick = () => completeTask(index);
     tasksList.appendChild(li);
   });
@@ -162,14 +160,11 @@ function addTask(){
 function completeTask(index){
   const task = tasks[index];
   if(!task.endsWith('✅') && confirm(`Mark "${task}" complete?`)){
-    // Reduce inventory based on keywords
     if(task.toLowerCase().includes('motor')) inventory.Motor = Math.max(0, inventory.Motor-1);
     if(task.toLowerCase().includes('servo')) inventory.Servo = Math.max(0, inventory.Servo-1);
     if(task.toLowerCase().includes('sensor')) inventory.Sensors = Math.max(0, inventory.Sensors-1);
     
-    // Mark as complete
     tasks[index] += ' ✅';
-    
     saveData();
     updateInventoryUI();
     updateTasksUI();
@@ -195,9 +190,10 @@ function addInventory(){
   }
 }
 
-// On page load, show app if user is already signed in
+// On page load, show login if no username
 document.addEventListener('DOMContentLoaded', function(){
-  if(localStorage.getItem('username')){
+  const username = localStorage.getItem('username');
+  if(username){
     loginScreen.style.display='none';
     mainApp.style.display='block';
     showWelcome();
@@ -205,11 +201,10 @@ document.addEventListener('DOMContentLoaded', function(){
     updateTasksUI();
   } else {
     loginScreen.style.display='flex';
+    mainApp.style.display='none';
   }
 });
 </script>
 
 </body>
 </html>
-
-
