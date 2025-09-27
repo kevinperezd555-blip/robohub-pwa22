@@ -3,46 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoboHub Ultimate Pro</title>
+<title>RoboHub Ultimate 6.0</title>
 <style>
-/* ===== GLOBAL ===== */
-body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; background:#f4f4f4; transition:0.3s; }
-body.dark { background:#1a1a1a; color:white; }
-nav { background:#2575fc; color:white; display:flex; justify-content:space-between; align-items:center; padding:10px 20px; position:sticky; top:0; box-shadow:0 3px 10px rgba(0,0,0,0.2); z-index:10; }
-nav button { border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.3s; }
-nav button:hover { opacity:0.8; }
-#alerts { padding:10px 20px; background:#ffdddd; margin:10px 20px; border-radius:8px; max-height:100px; overflow-y:auto; box-shadow:0 3px 10px rgba(0,0,0,0.2); }
-#alerts .alert { margin:5px 0; padding:5px 10px; border-radius:6px; background:#dc3545; color:white; }
+body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; background:#0f0f20; color:#fff; transition:0.5s; overflow-x:hidden;}
+nav { background:#121232; color:white; display:flex; justify-content:space-between; align-items:center; padding:10px 20px; box-shadow:0 3px 10px rgba(0,0,0,0.5); }
+nav button { border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.3s; background:#2575fc; color:white; margin-left:5px;}
+nav button:hover { box-shadow:0 0 15px #0ff; transform:scale(1.05);}
+#alerts { padding:10px 20px; margin:10px 20px; border-radius:8px; max-height:120px; overflow-y:auto; background:rgba(255,0,0,0.2);}
+#alerts .alert { margin:5px 0; padding:5px 10px; border-radius:6px; background:#ff4444; color:white; animation:pulse 1s infinite; }
+@keyframes pulse {0% {box-shadow:0 0 5px #ff0000;}50%{box-shadow:0 0 20px #ff4444;}100%{box-shadow:0 0 5px #ff0000;}}
 .container { display:grid; grid-template-columns:1fr 1fr; gap:20px; padding:20px; }
-.card { background:white; padding:20px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.1); transition:0.3s; }
-body.dark .card { background:#333; color:white; }
+.card { background:rgba(20,20,40,0.85); padding:20px; border-radius:12px; box-shadow:0 0 20px rgba(0,255,255,0.2); transition:0.3s; }
+.card:hover { box-shadow:0 0 30px rgba(0,255,255,0.5); transform:scale(1.02);}
 ul { list-style:none; padding:0; max-height:300px; overflow-y:auto; }
-li { background:#f4f4f4; margin:5px 0; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; cursor:grab; transition:0.2s; }
-li.dragging { opacity:0.5; }
-li:hover { background:#e0e0e0; }
-body.dark li { background:#444; }
-body.dark li:hover { background:#555; }
+li { background:rgba(30,30,60,0.85); margin:5px 0; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:0.5s; opacity:1; }
+li.fade-out { opacity:0; transform:translateX(50px); }
 .btn { background:#2575fc; color:white; border:none; padding:10px 14px; border-radius:6px; cursor:pointer; transition:0.3s; margin-top:5px; }
-.btn:hover { background:#6a11cb; }
-input, select { padding:8px; border-radius:6px; border:1px solid #ccc; margin-bottom:10px; width:100%; }
-.progress { height:10px; border-radius:5px; background:#eee; margin-top:5px; overflow:hidden; }
-.progress-bar { height:100%; border-radius:5px; }
-.priority-high { color:#dc3545; font-weight:bold; }
+.btn:hover { box-shadow:0 0 15px #0ff; transform:scale(1.05);}
+input, select { padding:8px; border-radius:6px; border:1px solid #0ff; margin-bottom:10px; width:100%; background:#121232; color:white; touch-action:manipulation; }
+.progress { height:10px; border-radius:5px; background:#222; margin-top:5px; overflow:hidden; }
+.progress-bar { height:100%; border-radius:5px; background:#0ff; transition:0.5s; }
+.priority-high { color:#ff4444; font-weight:bold; }
 .priority-medium { color:#ffc107; font-weight:bold; }
 .priority-low { color:#28a745; font-weight:bold; }
-#toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; z-index:20; }
-canvas { max-width:100%; height:auto; }
+#toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; z-index:20; box-shadow:0 0 10px #0ff; }
+canvas { max-width:100%; height:auto; border-radius:12px;}
+.popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#111133; padding:20px; border-radius:12px; box-shadow:0 0 30px #0ff; display:none; z-index:30; width:300px;}
+.popup input, .popup select{ width:100%; margin:5px 0;}
+.popup button { width:100%; margin-top:10px; }
+
+/* ===== DARK/LIGHT MODE ===== */
+body.light-mode { background:#f0f0f0; color:#111; }
+body.light-mode .card { background:#fff; color:#111; box-shadow:0 0 20px rgba(0,0,0,0.2);}
+body.light-mode nav { background:#ddd; color:#111; box-shadow:0 3px 10px rgba(0,0,0,0.2);}
+body.light-mode input, body.light-mode select { background:#eee; color:#111; border:1px solid #111;}
+body.light-mode .btn { background:#2575fc; color:#fff;}
+body.light-mode li { background:#eee; color:#111;}
+body.light-mode #alerts { background:rgba(255,0,0,0.1); color:#111;}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .container { grid-template-columns: 1fr; padding: 10px; }
+  nav { flex-direction: column; align-items: flex-start; }
+  nav button { margin: 5px 0 0 0; }
+  .card { padding: 15px; }
+  input, select { font-size: 14px; }
+  button.btn { font-size: 14px; padding: 8px 10px; }
+  canvas { max-height: 250px; }
+  #inventoryList, #taskList { max-height: 200px; }
+}
 </style>
 </head>
 <body>
 
+<canvas id="particleCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;"></canvas>
+
 <audio id="alertSound" src="https://www.myinstants.com/media/sounds/bleep.mp3"></audio>
+<audio id="clickSound" src="https://www.myinstants.com/media/sounds/bleep.mp3"></audio>
 <div id="toast"></div>
 
-<!-- LOGIN SCREEN -->
-<div id="loginScreen" style="display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%);">
-  <div style="background:white;padding:40px 50px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.2);width:350px; text-align:center;">
-    <h1 style="margin-bottom:20px;color:#2575fc;">🤖 RoboHub Ultimate</h1>
+<div id="popup" class="popup">
+<h3 id="popupTitle"></h3>
+<div id="popupContent"></div>
+<button onclick="closePopup()">Close</button>
+</div>
+
+<div id="loginScreen" style="display:flex;justify-content:center;align-items:center;height:100vh;">
+  <div style="background:#111133;padding:40px 50px;border-radius:12px;width:350px; text-align:center;">
+    <h1 style="margin-bottom:20px;color:#0ff;">🤖 RoboHub Ultimate</h1>
     <input id="username" placeholder="Username"/>
     <input id="password" type="password" placeholder="Password"/>
     <select id="role">
@@ -50,43 +78,48 @@ canvas { max-width:100%; height:auto; }
       <option value="teacher">Teacher</option>
     </select>
     <button class="btn" onclick="signIn()" style="width:100%;margin-top:10px;">Sign In</button>
-    <button class="btn" style="background:#6a11cb;" onclick="autofillDemo()">Quick Demo</button>
+    <button class="btn" style="background:#0ff;color:#111;" onclick="autofillDemo()">Quick Demo</button>
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="mainApp" style="display:none;">
 <nav>
   <div style="font-weight:bold;font-size:18px;">🤖 RoboHub - <span id="navUser"></span></div>
   <div>
-    <button onclick="toggleDarkMode()">🌓 Dark Mode</button>
-    <button onclick="signOut()" style="background:#dc3545;">Logout</button>
+    <button onclick="toggleDarkMode()">🌓 Toggle Theme</button>
+    <button onclick="signOut()" style="background:#ff4444;">Logout</button>
   </div>
 </nav>
 
 <div id="alerts"></div>
 
 <div class="container">
-  <!-- Inventory -->
   <div class="card">
     <h2>📦 Inventory</h2>
     <input type="text" id="inventorySearch" placeholder="Search inventory..." onkeyup="renderInventory()"/>
     <ul id="inventoryList"></ul>
     <button class="btn" id="addInventoryBtn" onclick="addInventory()">+ Add Item</button>
+    <button class="btn" onclick="restockLow()">💫 Restock Low Items</button>
   </div>
 
-  <!-- Tasks -->
   <div class="card">
     <h2>📝 Task Board</h2>
     <input type="text" id="taskSearch" placeholder="Search tasks..." onkeyup="renderTasks()"/>
     <ul id="taskList"></ul>
     <button class="btn" id="addTaskBtn" onclick="addTask()">+ Add Task</button>
+    <button class="btn" onclick="generateRandomTask()">🎲 Random Task</button>
+    <button class="btn" onclick="completeOverdue()">✅ Complete All Overdue</button>
   </div>
 
-  <!-- Dashboard -->
   <div class="card" style="grid-column:span 2;">
     <h2>📊 Dashboard</h2>
     <canvas id="taskChart"></canvas>
+    <canvas id="inventoryChart" style="margin-top:20px;"></canvas>
+    <div style="margin-top:10px;">
+      <strong>Overdue Tasks:</strong> <span id="statOverdue"></span> | 
+      <strong>Low Stock Items:</strong> <span id="statLowStock"></span> | 
+      <strong>Total Tasks:</strong> <span id="statTotalTasks"></span>
+    </div>
   </div>
 </div>
 </div>
@@ -97,165 +130,71 @@ canvas { max-width:100%; height:auto; }
 let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-// ===== DEMO DATA =====
-if(!localStorage.getItem("inventory")){
-    inventory = [
-        {name:"Servo", qty:3, max:10},
-        {name:"Motor", qty:5, max:10},
-        {name:"Sensor", qty:7, max:10},
-        {name:"Battery", qty:2, max:10}
-    ];
-    localStorage.setItem("inventory", JSON.stringify(inventory));
-}
-if(!localStorage.getItem("tasks")){
-    tasks = [
-        {text:"Build chassis", assignee:"Jacob", priority:"High", done:false, due:"2025-09-30"},
-        {text:"Wire motors", assignee:"Kevin", priority:"Medium", done:false, due:"2025-09-28"},
-        {text:"Test sensors", assignee:"Alex", priority:"Low", done:false, due:"2025-10-01"},
-        {text:"Update firmware", assignee:"Sam", priority:"High", done:false, due:"2025-09-29"}
-    ];
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+// ===== PARTICLES =====
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particlesArray=[];
+function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight;}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+class Particle{ constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.size=Math.random()*2+1; this.speedX=(Math.random()-0.5)*1.5; this.speedY=(Math.random()-0.5)*1.5; }
+update(){ this.x+=this.speedX; this.y+=this.speedY; if(this.x<0)this.x=canvas.width;if(this.x>canvas.width)this.x=0;if(this.y<0)this.y=canvas.height;if(this.y>canvas.height)this.y=0;}
+draw(){ ctx.fillStyle='rgba(0,255,255,'+this.size/3+')'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill();}}
+function initParticles(num=150){ if(window.innerWidth<600) num=60; particlesArray=[]; for(let i=0;i<num;i++) particlesArray.push(new Particle());}
+initParticles();
+function animateParticles(){ ctx.clearRect(0,0,canvas.width,canvas.height); particlesArray.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animateParticles);}
+animateParticles();
+function particleIntensity(){ const intensity=tasks.length+inventory.length; particlesArray.forEach(p=>p.size=1+Math.random()*Math.min(3,intensity/5));}
 
 // ===== LOGIN =====
-function signIn(){
-const username = document.getElementById('username').value.trim();
-const password = document.getElementById('password').value.trim();
-const role = document.getElementById('role').value;
-if(username && password){
-localStorage.setItem('username', username);
-localStorage.setItem('role', role);
-document.getElementById('loginScreen').style.display='none';
-document.getElementById('mainApp').style.display='block';
-document.getElementById('navUser').textContent=username+' ('+role+')';
-renderAll(); applyRoleRestrictions(); showToast('Signed in as '+username);
-}else alert("Enter username and password.");
-}
-function signOut(){ localStorage.removeItem('username'); localStorage.removeItem('role'); document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; showToast('Signed out'); }
-function autofillDemo(){ document.getElementById('username').value="demoUser"; document.getElementById('password').value="demoPass"; }
+function signIn(){ const username=document.getElementById('username').value.trim(); const password=document.getElementById('password').value.trim(); const role=document.getElementById('role').value; if(username && password){ localStorage.setItem('username',username); localStorage.setItem('role',role); document.getElementById('loginScreen').style.display='none'; document.getElementById('mainApp').style.display='block'; document.getElementById('navUser').textContent=username+' ('+role+')'; renderAll(); updateCharts(); showToast('Signed in as '+username);}else alert("Enter username and password.");}
+function signOut(){ localStorage.removeItem('username'); localStorage.removeItem('role'); document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; showToast('Signed out');}
+function autofillDemo(){ document.getElementById('username').value="demoUser"; document.getElementById('password').value="demoPass";}
 
-// ===== ROLES =====
-function applyRoleRestrictions(){
-const role = localStorage.getItem('role');
-document.getElementById("addInventoryBtn").style.display=(role==='teacher')?"inline-block":"none";
-document.getElementById("addTaskBtn").style.display=(role==='teacher')?"inline-block":"none";
-renderAll(); updateChart(); updateAlerts(); enableDragDrop();
-}
-function toggleDarkMode(){ document.body.classList.toggle('dark'); }
-
-// ===== INVENTORY =====
-function renderInventory(){
-const search = document.getElementById("inventorySearch")?.value.toLowerCase()||"";
-const list = document.getElementById("inventoryList"); if(!list) return; list.innerHTML="";
-inventory.forEach((item, idx)=>{
-if(item.name.toLowerCase().includes(search)){
-const li = document.createElement("li");
-const progressPercent = Math.min(100, Math.floor((item.qty/item.max)*100));
-const progressBar = `<div class="progress"><div class="progress-bar" style="width:${progressPercent}%;background:${progressPercent<30?'#dc3545':progressPercent<70?'#ffc107':'#28a745'}"></div></div>`;
-let lowStock = item.qty<=2 ? " 🔴" : "";
-li.innerHTML=`<div>${item.name} (Qty: ${item.qty})${lowStock}${progressBar}</div> ${localStorage.getItem('role')==='teacher'? `<button onclick="deleteInventory(${idx})">Delete</button>`:""}`;
-list.appendChild(li);
-}
-}); updateAlerts();
-}
-function addInventory(){ const name = prompt("Item name:"); const qty = parseInt(prompt("Quantity:"),10); const max = parseInt(prompt("Max quantity:"),10)||10; if(name && !isNaN(qty)){ inventory.push({name,qty,max}); localStorage.setItem("inventory",JSON.stringify(inventory)); renderInventory(); showToast('Inventory added'); } }
-function deleteInventory(i){ inventory.splice(i,1); localStorage.setItem("inventory",JSON.stringify(inventory)); renderInventory(); showToast('Inventory deleted'); }
-
-// ===== TASKS =====
-function renderTasks(){
-const search=document.getElementById("taskSearch")?.value.toLowerCase()||"";
-const list=document.getElementById("taskList"); if(!list) return; list.innerHTML="";
-tasks.sort((a,b)=> new Date(a.due||0)- new Date(b.due||0));
-tasks.forEach((t, idx)=>{
-if(t.text.toLowerCase().includes(search)){
-const priorityClass = t.priority==='High'? 'priority-high': t.priority==='Medium'? 'priority-medium':'priority-low';
-const role = localStorage.getItem('role');
-const username = localStorage.getItem('username');
-const studentButton = (role==='student' && username===t.assignee && !t.done)? `<button onclick="completeTask(${idx})">✅</button>`:"";
-const teacherButtons = (role==='teacher')? `<button onclick="deleteTask(${idx})">❌</button>`:"";
-const dueText = t.due? ` | Due: ${t.due}`:"";
-const doneMark = t.done? " ✔️":"";
-const li = document.createElement("li");
-li.dataset.index=idx;
-li.innerHTML=`<span class="${priorityClass}">${t.text} (assigned: ${t.assignee})${dueText}</span> ${teacherButtons} ${studentButton} ${doneMark}`;
-list.appendChild(li);
-}
-}); updateChart(); updateAlerts(); enableDragDrop();
-}
-function addTask(){ 
-const text = prompt("Task description:"); 
-const assignee = prompt("Assign to (username):");
-const priority = prompt("Priority: High / Medium / Low","Medium"); 
-const due = prompt("Due date (YYYY-MM-DD):","");
-if(text && assignee){ tasks.push({text,assignee,priority,done:false,due}); localStorage.setItem("tasks",JSON.stringify(tasks)); renderTasks(); showToast('Task added'); }
-}
-function completeTask(i){ tasks[i].done=true; localStorage.setItem("tasks",JSON.stringify(tasks)); renderTasks(); showToast('Task completed'); }
-function deleteTask(i){ tasks.splice(i,1); localStorage.setItem("tasks",JSON.stringify(tasks)); renderTasks(); showToast('Task deleted'); }
-
-// ===== ALERTS =====
-function updateAlerts(){
-const alertsDiv=document.getElementById('alerts'); if(!alertsDiv) return; alertsDiv.innerHTML="";
-const today=new Date(); 
-let playSound=false;
-tasks.forEach(t=>{
-if(!t.done && t.due && new Date(t.due)<today){
-const div=document.createElement("div"); div.className="alert"; div.textContent=`Overdue task: ${t.text} (assigned: ${t.assignee})`; alertsDiv.appendChild(div); playSound=true;
-}
-});
-inventory.forEach(item=>{
-if(item.qty<=2){ const div=document.createElement("div"); div.className="alert"; div.textContent=`Low stock: ${item.name} (${item.qty})`; alertsDiv.appendChild(div); playSound=true; }
-});
-if(playSound){ document.getElementById('alertSound')?.play(); }
-}
-
-// ===== CHART =====
-function updateChart(){
-const ctx=document.getElementById("taskChart"); if(!ctx) return;
-const done = tasks.filter(t=>t.done).length;
-const pending = tasks.length - done;
-new Chart(ctx,{type:'doughnut',data:{labels:['Done','Pending'],datasets:[{data:[done,pending],backgroundColor:['#28a745','#ffc107']}]},options:{responsive:true}});
-}
-
-// ===== DRAG & DROP =====
-function enableDragDrop(){
-const role = localStorage.getItem('role'); 
-if(role!=='teacher') return;
-const list=document.getElementById('taskList'); 
-if(!list) return;
-let dragged=null;
-[...list.children].forEach(li=>{
-li.draggable=true;
-li.addEventListener('dragstart', e=>{ dragged=li; li.classList.add('dragging'); });
-li.addEventListener('dragend', e=>{ dragged=null; li.classList.remove('dragging'); reorderTasks(); });
-li.addEventListener('dragover', e=>{ e.preventDefault(); const bounding = li.getBoundingClientRect(); const offset = e.clientY - bounding.top; if(offset>bounding.height/2){ li.after(dragged); }else{ li.before(dragged); } });
-});
-}
-function reorderTasks(){ 
-const newTasks=[]; 
-document.querySelectorAll('#taskList li').forEach(li=>{ 
-const idx=parseInt(li.dataset.index); 
-if(!isNaN(idx)) newTasks.push(tasks[idx]); 
-});
-tasks=newTasks;
-localStorage.setItem("tasks",JSON.stringify(tasks));
-renderTasks();
-}
+// ===== CLICK SOUND =====
+document.querySelectorAll('button').forEach(btn=>{btn.addEventListener('click',()=>document.getElementById('clickSound').play());});
 
 // ===== TOAST =====
-function showToast(msg){ const toast = document.getElementById('toast'); toast.textContent = msg; toast.style.display='block'; setTimeout(()=>{toast.style.display='none';},2000); }
+function showToast(msg){ const toast=document.getElementById('toast'); toast.textContent=msg; toast.style.display='block'; setTimeout(()=>{toast.style.display='none';},2000);}
 
-// ===== INIT =====
-function renderAll(){ renderInventory(); renderTasks(); updateChart(); updateAlerts(); }
-window.onload = function(){
-    const user = localStorage.getItem('username');
-    if(user){
-        document.getElementById('loginScreen').style.display='none';
-        document.getElementById('mainApp').style.display='block';
-        document.getElementById('navUser').textContent = user+' ('+localStorage.getItem('role')+')';
-        renderAll(); applyRoleRestrictions();
-    }
+// ===== DARK/LIGHT MODE =====
+function toggleDarkMode(){ document.body.classList.toggle('light-mode'); if(document.body.classList.contains('light-mode')) showToast('Light Mode ON'); else showToast('Dark Mode ON'); }
+
+// ===== INVENTORY & TASKS =====
+function fadeOutAndRemove(el){ el.classList.add('fade-out'); setTimeout(()=>el.remove(),500); }
+function renderInventory(){ const list=document.getElementById('inventoryList'); list.innerHTML=''; inventory.forEach((item,index)=>{ const li=document.createElement('li'); li.textContent=item.name+' ('+item.quantity+')'; li.onclick=()=>{item.quantity--; if(item.quantity<=0) fadeOutAndRemove(li); renderAll(); updateCharts(); particleIntensity(); showToast('Used 1 '+item.name);} list.appendChild(li); }); }
+function renderTasks(){ const list=document.getElementById('taskList'); list.innerHTML=''; tasks.forEach((task,index)=>{ const li=document.createElement('li'); li.textContent=task.name+' ['+task.assignee+']'; li.onclick=()=>{fadeOutAndRemove(li); tasks.splice(index,1); renderAll(); updateCharts(); particleIntensity(); showToast('Completed task: '+task.name);} list.appendChild(li); }); }
+function renderAll(){ renderInventory(); renderTasks(); updateStats(); particleIntensity();}
+
+// ===== STATS =====
+function updateStats(){
+  document.getElementById('statOverdue').textContent=tasks.length; 
+  document.getElementById('statLowStock').textContent=inventory.filter(i=>i.quantity<=2).length;
+  document.getElementById('statTotalTasks').textContent=tasks.length;
 }
-</script>
 
+// ===== CHARTS =====
+let taskChart, inventoryChart;
+function updateCharts(){
+  const ctx1=document.getElementById('taskChart').getContext('2d');
+  const ctx2=document.getElementById('inventoryChart').getContext('2d');
+  const taskData={labels:tasks.map(t=>t.name), datasets:[{label:'Tasks', data:tasks.map(t=>1), backgroundColor:'rgba(0,255,255,0.5)'}]};
+  const inventoryData={labels:inventory.map(i=>i.name), datasets:[{label:'Inventory Qty', data:inventory.map(i=>i.quantity), backgroundColor:'rgba(255,255,0,0.5)'}]};
+  if(taskChart) taskChart.destroy();
+  if(inventoryChart) inventoryChart.destroy();
+  taskChart=new Chart(ctx1,{type:'bar',data:taskData,options:{plugins:{legend:{display:false}},responsive:true}});
+  inventoryChart=new Chart(ctx2,{type:'bar',data:inventoryData,options:{plugins:{legend:{display:false}},responsive:true}});
+}
+
+// ===== ADD TASKS/INVENTORY =====
+function addInventory(){ const name=prompt('Item Name'); const qty=parseInt(prompt('Quantity')); if(name && qty){ inventory.push({name:name,quantity:qty}); renderAll(); updateCharts(); showToast('Added '+name); }}
+function addTask(){ const name=prompt('Task Name'); const assignee=prompt('Assignee'); if(name && assignee){ tasks.push({name:name,assignee:assignee}); renderAll(); updateCharts(); showToast('Added task: '+name); }}
+function generateRandomTask(){ const taskNames=['Build Chassis','Wire Motors','Test Sensors','Calibrate Arm','Install Battery']; const names=taskNames[Math.floor(Math.random()*taskNames.length)]; tasks.push({name:names,assignee:'Auto'}); renderAll(); updateCharts(); showToast('Random Task Added'); }
+function restockLow(){ inventory.forEach(i=>{if(i.quantity<3)i.quantity=5}); renderAll(); updateCharts(); showToast('Restocked Low Items'); }
+function completeOverdue(){ tasks=[]; renderAll(); updateCharts(); showToast('All Overdue Tasks Completed'); }
+
+renderAll();
+updateCharts();
+</script>
 </body>
 </html>
