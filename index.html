@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoboHub Ultimate 6.0</title>
+<title>RoboHub Ultimate 7.0</title>
 <style>
 body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; background:#0f0f20; color:#fff; transition:0.5s; overflow-x:hidden;}
 nav { background:#121232; color:white; display:flex; justify-content:space-between; align-items:center; padding:10px 20px; box-shadow:0 3px 10px rgba(0,0,0,0.5); }
@@ -21,13 +21,8 @@ li.fade-out { opacity:0; transform:translateX(50px); }
 .btn { background:#2575fc; color:white; border:none; padding:10px 14px; border-radius:6px; cursor:pointer; transition:0.3s; margin-top:5px; }
 .btn:hover { box-shadow:0 0 15px #0ff; transform:scale(1.05);}
 input, select { padding:8px; border-radius:6px; border:1px solid #0ff; margin-bottom:10px; width:100%; background:#121232; color:white; touch-action:manipulation; }
-.progress { height:10px; border-radius:5px; background:#222; margin-top:5px; overflow:hidden; }
-.progress-bar { height:100%; border-radius:5px; background:#0ff; transition:0.5s; }
-#toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; z-index:20; box-shadow:0 0 10px #0ff; }
 canvas { max-width:100%; height:auto; border-radius:12px;}
-.popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#111133; padding:20px; border-radius:12px; box-shadow:0 0 30px #0ff; display:none; z-index:30; width:300px;}
-.popup input, .popup select{ width:100%; margin:5px 0;}
-.popup button { width:100%; margin-top:10px; }
+#toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; z-index:20; box-shadow:0 0 10px #0ff; }
 
 /* DARK/LIGHT MODE */
 body.light-mode { background:#f0f0f0; color:#111; }
@@ -59,12 +54,6 @@ body.light-mode #alerts { background:rgba(255,0,0,0.1); color:#111;}
 <audio id="clickSound" src="https://www.myinstants.com/media/sounds/bleep.mp3"></audio>
 <div id="toast"></div>
 
-<div id="popup" class="popup">
-<h3 id="popupTitle"></h3>
-<div id="popupContent"></div>
-<button onclick="closePopup()">Close</button>
-</div>
-
 <div id="loginScreen" style="display:flex;justify-content:center;align-items:center;height:100vh;">
   <div style="background:#111133;padding:40px 50px;border-radius:12px;width:350px; text-align:center;">
     <h1 style="margin-bottom:20px;color:#0ff;">🤖 RoboHub Ultimate</h1>
@@ -74,8 +63,7 @@ body.light-mode #alerts { background:rgba(255,0,0,0.1); color:#111;}
       <option value="student">Student</option>
       <option value="teacher">Teacher</option>
     </select>
-    <button class="btn" onclick="signIn()" style="width:100%;margin-top:10px;">Sign In</button>
-    <button class="btn" style="background:#0ff;color:#111;" onclick="autofillDemo()">Quick Demo</button>
+    <button class="btn" onclick="signIn()">Sign In</button>
   </div>
 </div>
 
@@ -95,7 +83,7 @@ body.light-mode #alerts { background:rgba(255,0,0,0.1); color:#111;}
     <h2>📦 Inventory</h2>
     <input type="text" id="inventorySearch" placeholder="Search inventory..." onkeyup="renderInventory()"/>
     <ul id="inventoryList"></ul>
-    <button class="btn" id="addInventoryBtn" onclick="addInventory()">+ Add Item</button>
+    <button class="btn" onclick="addInventory()">+ Add Item</button>
     <button class="btn" onclick="restockLow()">💫 Restock Low Items</button>
   </div>
 
@@ -103,7 +91,7 @@ body.light-mode #alerts { background:rgba(255,0,0,0.1); color:#111;}
     <h2>📝 Task Board</h2>
     <input type="text" id="taskSearch" placeholder="Search tasks..." onkeyup="renderTasks()"/>
     <ul id="taskList"></ul>
-    <button class="btn" id="addTaskBtn" onclick="addTask()">+ Add Task</button>
+    <button class="btn" onclick="addTask()">+ Add Task</button>
     <button class="btn" onclick="generateRandomTask()">🎲 Random Task</button>
     <button class="btn" onclick="completeOverdue()">✅ Complete All Overdue</button>
   </div>
@@ -123,17 +111,15 @@ body.light-mode #alerts { background:rgba(255,0,0,0.1); color:#111;}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// ===== DATA =====
-let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let inventory = [];
+let tasks = [];
 
-// ===== PARTICLES =====
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
-let particlesArray=[];
 function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight;}
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
+let particlesArray=[];
 class Particle{ constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.size=Math.random()*2+1; this.speedX=(Math.random()-0.5)*1.5; this.speedY=(Math.random()-0.5)*1.5; }
 update(){ this.x+=this.speedX; this.y+=this.speedY; if(this.x<0)this.x=canvas.width;if(this.x>canvas.width)this.x=0;if(this.y<0)this.y=canvas.height;if(this.y>canvas.height)this.y=0;}
 draw(){ ctx.fillStyle='rgba(0,255,255,'+this.size/3+')'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill();}}
@@ -141,49 +127,36 @@ function initParticles(num=150){ if(window.innerWidth<600) num=60; particlesArra
 initParticles();
 function animateParticles(){ ctx.clearRect(0,0,canvas.width,canvas.height); particlesArray.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animateParticles);}
 animateParticles();
-function particleIntensity(){ const intensity=tasks.length+inventory.length; particlesArray.forEach(p=>p.size=1+Math.random()*Math.min(3,intensity/5));}
 
-// ===== LOGIN =====
 function signIn() {
   const username = document.getElementById('username').value.trim();
   const role = document.getElementById('role').value || 'student';
-  if (username.length > 0) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('navUser').textContent = username + ' (' + role + ')';
+  if(username.length>0){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('mainApp').style.display='block';
+    document.getElementById('navUser').textContent=username+' ('+role+')';
     renderAll();
     updateCharts();
-    showToast('Signed in as ' + username);
-  } else {
-    alert("Enter a username!");
-  }
+    showToast('Signed in as '+username);
+  } else { alert("Enter a username!"); }
 }
+
 function signOut(){ document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; showToast('Signed out');}
-function autofillDemo(){ document.getElementById('username').value="demoUser"; document.getElementById('password').value="demoPass";}
 
-// ===== CLICK SOUND =====
-document.querySelectorAll('button').forEach(btn=>{btn.addEventListener('click',()=>document.getElementById('clickSound').play());});
+function toggleDarkMode(){ document.body.classList.toggle('light-mode'); if(document.body.classList.contains('light-mode')) showToast('Light Mode ON'); else showToast('Dark Mode ON');}
 
-// ===== TOAST =====
 function showToast(msg){ const toast=document.getElementById('toast'); toast.textContent=msg; toast.style.display='block'; setTimeout(()=>{toast.style.display='none';},2000);}
 
-// ===== DARK/LIGHT MODE =====
-function toggleDarkMode(){ document.body.classList.toggle('light-mode'); if(document.body.classList.contains('light-mode')) showToast('Light Mode ON'); else showToast('Dark Mode ON'); }
-
-// ===== INVENTORY & TASKS =====
 function fadeOutAndRemove(el){ el.classList.add('fade-out'); setTimeout(()=>el.remove(),500); }
-function renderInventory(){ const list=document.getElementById('inventoryList'); list.innerHTML=''; inventory.forEach((item,index)=>{ const li=document.createElement('li'); li.textContent=item.name+' ('+item.quantity+')'; li.onclick=()=>{item.quantity--; if(item.quantity<=0) fadeOutAndRemove(li); renderAll(); updateCharts(); particleIntensity(); showToast('Used 1 '+item.name);} list.appendChild(li); }); }
-function renderTasks(){ const list=document.getElementById('taskList'); list.innerHTML=''; tasks.forEach((task,index)=>{ const li=document.createElement('li'); li.textContent=task.name+' ['+task.assignee+']'; li.onclick=()=>{fadeOutAndRemove(li); tasks.splice(index,1); renderAll(); updateCharts(); particleIntensity(); showToast('Completed task: '+task.name);} list.appendChild(li); }); }
-function renderAll(){ renderInventory(); renderTasks(); updateStats(); particleIntensity();}
 
-// ===== STATS =====
-function updateStats(){
-  document.getElementById('statOverdue').textContent=tasks.length; 
-  document.getElementById('statLowStock').textContent=inventory.filter(i=>i.quantity<=2).length;
-  document.getElementById('statTotalTasks').textContent=tasks.length;
-}
+function renderInventory(){ const list=document.getElementById('inventoryList'); list.innerHTML=''; inventory.forEach((item,index)=>{ const li=document.createElement('li'); li.textContent=item.name+' ('+item.quantity+')'; li.onclick=()=>{item.quantity--; if(item.quantity<=0) fadeOutAndRemove(li); renderAll(); updateCharts(); showToast('Used 1 '+item.name);} list.appendChild(li); }); }
 
-// ===== CHARTS =====
+function renderTasks(){ const list=document.getElementById('taskList'); list.innerHTML=''; tasks.forEach((task,index)=>{ const li=document.createElement('li'); li.textContent=task.name+' ['+task.assignee+']'; li.onclick=()=>{fadeOutAndRemove(li); tasks.splice(index,1); renderAll(); updateCharts(); showToast('Completed task: '+task.name);} list.appendChild(li); }); }
+
+function renderAll(){ renderInventory(); renderTasks(); updateStats(); }
+
+function updateStats(){ document.getElementById('statOverdue').textContent=tasks.length; document.getElementById('statLowStock').textContent=inventory.filter(i=>i.quantity<=2).length; document.getElementById('statTotalTasks').textContent=tasks.length;}
+
 let taskChart, inventoryChart;
 function updateCharts(){
   const ctx1=document.getElementById('taskChart').getContext('2d');
@@ -196,7 +169,6 @@ function updateCharts(){
   inventoryChart=new Chart(ctx2,{type:'bar',data:inventoryData,options:{plugins:{legend:{display:false}},responsive:true}});
 }
 
-// ===== ADD TASKS/INVENTORY =====
 function addInventory(){ const name=prompt('Item Name'); const qty=parseInt(prompt('Quantity')); if(name && qty){ inventory.push({name:name,quantity:qty}); renderAll(); updateCharts(); showToast('Added '+name); }}
 function addTask(){ const name=prompt('Task Name'); const assignee=prompt('Assignee'); if(name && assignee){ tasks.push({name:name,assignee:assignee}); renderAll(); updateCharts(); showToast('Added task: '+name); }}
 function generateRandomTask(){ const taskNames=['Build Chassis','Wire Motors','Test Sensors','Calibrate Arm','Install Battery']; const names=taskNames[Math.floor(Math.random()*taskNames.length)]; tasks.push({name:names,assignee:'Auto'}); renderAll(); updateCharts(); showToast('Random Task Added'); }
