@@ -1,578 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>RoboHub — Ultimate</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RoboHub Ultimate Pro+</title>
 <style>
-  :root{
-    --primary:#0d6efd; --accent:#0b5ed7; --bg:#f5f7fb; --card:#ffffff; --muted:#6c757d;
-    --success:#28a745; --warning:#ffc107; --danger:#dc3545;
-  }
-  body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:#222;transition:background .25s,color .25s;}
-  body.dark{background:#0e1114;color:#e6eef7;}
-  header{background:var(--primary);color:#fff;padding:18px 20px;text-align:center;font-weight:700;box-shadow:0 4px 14px rgba(13,110,253,0.12);}
-  .app {display:flex;min-height:calc(100vh - 72px);}
-  nav{width:240px;background:#111827;color:#fff;padding:18px;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;}
-  nav button{background:transparent;border:0;color:#fff;padding:10px;text-align:left;border-radius:8px;cursor:pointer;font-weight:600;}
-  nav button:hover{background:rgba(255,255,255,0.04);}
-  .content{flex:1;padding:22px;box-sizing:border-box;overflow:auto;}
-  .top-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
-  .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 16px rgba(15,23,42,0.06);}
-  body.dark .card{background:#111418;box-shadow:0 6px 16px rgba(0,0,0,0.6);}
-  h2{margin:0 0 10px 0;color:var(--primary);font-size:1.2rem;}
-  .inventory-grid,.task-top{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
-  input[type="text"], input[type="number"], input[type="date"], select, textarea{
-    padding:8px 10px;border-radius:8px;border:1px solid #dcdfe6;background:transparent;min-width:160px;
-  }
-  input::placeholder{color:#999;}
-  button.btn{background:var(--primary);color:#fff;border:0;padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:600;}
-  button.ghost{background:transparent;border:1px solid rgba(0,0,0,0.08);color:var(--muted);}
-  .cols{display:flex;gap:18px;align-items:flex-start;}
-  .column{flex:1;min-width:220px;max-width:100%;background:#f1f5f9;padding:12px;border-radius:10px;box-sizing:border-box;}
-  body.dark .column{background:#0b1113;}
-  .column h3{margin:0 0 8px 0;text-align:center;}
-  ul.card-list{list-style:none;padding:0;margin:0;min-height:60px;}
-  li.task{background:var(--card);margin:8px 0;padding:10px;border-radius:10px;display:flex;justify-content:space-between;gap:8px;align-items:center;cursor:grab;box-shadow:0 6px 14px rgba(2,6,23,0.06);}
-  body.dark li.task{background:#0f1618;}
-  .task-meta{display:flex;gap:8px;align-items:center;}
-  .badge{padding:4px 8px;border-radius:8px;font-size:0.78rem;color:#fff;font-weight:700;}
-  .badge.high{background:var(--danger);} .badge.medium{background:var(--warning);color:#222;} .badge.low{background:var(--success);}
-  .muted{color:var(--muted);font-size:0.9rem;}
-  .small{font-size:0.85rem;}
-  .low-alert{color:var(--danger);font-weight:700;}
-  .progress-wrap{width:100%;background:rgba(0,0,0,0.05);height:12px;border-radius:8px;overflow:hidden;margin-top:8px;}
-  .progress-bar{height:100%;background:var(--accent);width:0%;transition:width .4s;}
-  .controls-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;}
-  .flex{display:flex;gap:10px;align-items:center;}
-  .right{margin-left:auto;}
-  .file-input{display:none;}
-  .footer-note{font-size:0.85rem;color:var(--muted);margin-top:8px;}
-  /* responsive */
-  @media(max-width:900px){
-    nav{width:100%;display:flex;flex-wrap:wrap;flex-direction:row;gap:8px;padding:12px;}
-    .app{flex-direction:column;}
-    .cols{flex-direction:column;}
-  }
+body { font-family: Arial, sans-serif; margin:0; background:#f4f4f4; transition:0.3s; }
+body.dark { background:#1a1a1a; color:white; }
+nav { background:#222; color:white; display:flex; gap:10px; padding:10px; flex-wrap:wrap; }
+nav button, nav label { background:none; border:none; color:white; cursor:pointer; }
+.container { padding:20px; }
+.card { background:white; padding:20px; margin-bottom:20px; border-radius:8px; transition:0.3s; }
+body.dark .card { background:#333; }
+.btn { background:#007bff; color:white; border:none; padding:8px 12px; cursor:pointer; border-radius:4px; }
+.ghost { background:#ddd; border:none; padding:8px 12px; cursor:pointer; border-radius:4px; }
+input, select { padding:8px; border-radius:4px; border:1px solid #ccc; }
+ul { list-style:none; padding:0; }
+li { padding:6px 0; display:flex; justify-content:space-between; align-items:center; cursor:grab; }
+li.dragging { opacity:0.5; }
+.priority-high { color:#dc3545; font-weight:bold; }
+.priority-medium { color:#ffc107; font-weight:bold; }
+.priority-low { color:#28a745; font-weight:bold; }
+#toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; }
+canvas { max-width:100%; height:auto; }
+.alert { background:#dc3545; color:white; padding:8px; margin-bottom:10px; border-radius:5px; position:relative; }
 </style>
 </head>
 <body>
-<header>RoboHub 🤖 — Ultimate</header>
 
-<!-- Login screen -->
-<div id="loginScreen" style="padding:28px;display:flex;align-items:center;justify-content:center;">
-  <div class="card" style="width:420px;max-width:95%;">
-    <h2 style="margin-bottom:8px">🔐 RoboHub Login</h2>
-    <div class="muted small">Use any username & password — it stores your name for the welcome message.</div>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
-      <input id="username" placeholder="Username" />
-      <input id="password" placeholder="Password" type="password" />
-      <div style="display:flex;gap:10px;">
-        <button class="btn" onclick="signIn()">Sign In</button>
-        <button class="ghost" onclick="autofillDemo()">Quick demo</button>
-      </div>
-    </div>
-  </div>
+<audio id="alertSound" src="https://www.myinstants.com/media/sounds/bleep.mp3"></audio>
+<div id="toast"></div>
+
+<!-- LOGIN -->
+<div id="loginScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:10px;">
+<h1>🔐 RoboHub Ultimate Pro+</h1>
+<input id="username" placeholder="Username"/>
+<input id="password" placeholder="Password" type="password"/>
+<select id="role">
+<option value="student">Student</option>
+<option value="teacher">Teacher</option>
+</select>
+<div style="display:flex;gap:10px;">
+<button class="btn" onclick="signIn()">Sign In</button>
+<button class="ghost" onclick="autofillDemo()">Quick demo</button>
+</div>
 </div>
 
-<!-- Main app -->
+<!-- APP -->
 <div id="mainApp" style="display:none;">
-  <div class="app">
-    <nav>
-      <div style="font-weight:800;margin-bottom:6px">Navigation</div>
-      <button onclick="showSection('dashboard')">🏠 Dashboard</button>
-      <button onclick="showSection('inventory')">📦 Inventory</button>
-      <button onclick="showSection('tasks')">📝 Tasks</button>
-      <button onclick="showSection('profile')">👤 Profile</button>
-      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:10px 0;">
-      <button onclick="toggleDarkMode()">🌙 Toggle Dark</button>
-      <button onclick="exportData()">📤 Export JSON</button>
-      <label style="cursor:pointer;color:#fff">
-        <input id="fileImport" class="file-input" type="file" accept="application/json" onchange="importData(event)">
-        <div style="display:inline-block">📥 Import JSON</div>
-      </label>
-      <button onclick="resetData()" style="margin-top:auto;background:transparent;border-top:1px solid rgba(255,255,255,0.03);padding-top:12px;">🔁 Reset Data</button>
-    </nav>
+<nav>
+<button onclick="showSection('dashboard')">Dashboard</button>
+<button onclick="showSection('inventory')">Inventory</button>
+<button onclick="showSection('tasks')">Tasks</button>
+<button onclick="toggleDarkMode()">🌓 Dark Mode</button>
+<button onclick="signOut()">Logout</button>
+</nav>
+<div class="container">
+<div class="card" id="welcomeCard">Welcome to RoboHub Ultimate Pro+</div>
 
-    <div class="content">
-      <!-- Dashboard -->
-      <div id="dashboard" class="card section" style="display:none;">
-        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:240px;">
-            <h2>Overview</h2>
-            <div class="card" style="padding:12px;">
-              <div style="display:flex;gap:18px;align-items:center;">
-                <div>
-                  <div class="muted">Tasks</div>
-                  <div style="font-size:1.6rem;font-weight:700" id="statTasks">0</div>
-                </div>
-                <div>
-                  <div class="muted">Inventory items</div>
-                  <div style="font-size:1.6rem;font-weight:700" id="statInventory">0</div>
-                </div>
-                <div style="margin-left:auto;text-align:right;">
-                  <div class="muted">Completed</div>
-                  <div style="font-size:1.6rem;font-weight:700" id="statDone">0</div>
-                </div>
-              </div>
-              <div style="margin-top:12px">
-                <div class="muted">Progress</div>
-                <div class="progress-wrap"><div id="overallProgress" class="progress-bar"></div></div>
-                <div class="footer-note" id="progressPercent"></div>
-              </div>
-            </div>
-          </div>
+<!-- Alerts -->
+<div id="alerts" class="card"></div>
 
-          <div style="flex:1;min-width:280px;">
-            <h2>Quick Actions</h2>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              <div style="display:flex;gap:8px;">
-                <input id="quickItemName" placeholder="New inventory item" />
-                <input id="quickItemQty" type="number" placeholder="Qty" style="width:90px" />
-                <button class="btn" onclick="quickAddInventory()">Add</button>
-              </div>
-              <div style="display:flex;gap:8px;">
-                <input id="quickTaskName" placeholder="New task name" />
-                <select id="quickTaskPriority"><option>Medium</option><option>High</option><option>Low</option></select>
-                <select id="quickTaskAssignee"></select>
-                <button class="btn" onclick="quickAddTask()">Add Task</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Inventory -->
-      <div id="inventory" class="card section" style="display:none;">
-        <h2>📦 Inventory</h2>
-
-        <div class="inventory-grid" style="margin-bottom:12px;">
-          <input id="invSearch" placeholder="Search inventory..." oninput="updateInventoryUI()" />
-          <div class="right" style="margin-left:auto;display:flex;gap:8px;">
-            <button class="btn" onclick="openAddInventoryModal()">+ Add Item</button>
-            <button class="ghost" onclick="exportData()">Export</button>
-          </div>
-        </div>
-
-        <div id="inventoryList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;"></div>
-
-        <div class="footer-note">Tip: Use the "Use" button to consume inventory items (decrease qty).</div>
-      </div>
-
-      <!-- Tasks -->
-      <div id="tasks" class="card section" style="display:none;">
-        <h2>📝 Task Board</h2>
-
-        <div class="task-top">
-          <input id="taskSearch" placeholder="Search tasks..." oninput="updateTasksUI()" />
-          <select id="filterPriority" onchange="updateTasksUI()"><option value="">All priorities</option><option>High</option><option>Medium</option><option>Low</option></select>
-          <select id="filterAssignee" onchange="updateTasksUI()"><option value="">All people</option></select>
-          <div class="right" style="margin-left:auto;display:flex;gap:8px;">
-            <button class="btn" onclick="openAddTaskModal()">+ Add Task</button>
-            <button class="ghost" onclick="exportData()">Export</button>
-          </div>
-        </div>
-
-        <div class="cols">
-          <div class="column">
-            <h3>To Do</h3>
-            <ul id="todoList" class="card-list" ondragover="allowDrop(event)" ondrop="dropTask(event,'todo')"></ul>
-          </div>
-          <div class="column">
-            <h3>In Progress</h3>
-            <ul id="inProgressList" class="card-list" ondragover="allowDrop(event)" ondrop="dropTask(event,'inprogress')"></ul>
-          </div>
-          <div class="column">
-            <h3>Done</h3>
-            <ul id="doneList" class="card-list" ondragover="allowDrop(event)" ondrop="dropTask(event,'done')"></ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Profile -->
-      <div id="profile" class="card section" style="display:none;">
-        <h2>👤 Profile</h2>
-        <div class="welcome" id="welcomeCard"></div>
-        <div style="display:flex;gap:8px;margin-top:12px;">
-          <button class="btn" onclick="logOut()">Log Out</button>
-          <button class="ghost" onclick="resetData()">Reset Data</button>
-        </div>
-        <div class="footer-note" style="margin-top:12px;">Export or import a JSON backup to move RoboHub between devices.</div>
-      </div>
-
-    </div>
-  </div>
+<!-- Dashboard -->
+<div id="dashboard" class="section">
+<h2>📊 Dashboard</h2>
+<canvas id="taskChart"></canvas>
 </div>
 
-<div id="modal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:2000;">
-  <div style="background:rgba(0,0,0,0.35);position:absolute;inset:0;" onclick="closeModal()"></div>
-  <div class="card" style="width:520px;max-width:95%;z-index:2100;padding:18px;">
-    <div id="modalContent"></div>
-    <div style="margin-top:12px;text-align:right;">
-      <button class="ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn" id="modalSaveBtn">Save</button>
-    </div>
-  </div>
+<!-- Inventory -->
+<div id="inventory" class="section" style="display:none;">
+<h2>📦 Inventory</h2>
+<input type="text" id="inventorySearch" placeholder="Search inventory..." onkeyup="renderInventory()"/>
+<ul id="inventoryList"></ul>
+<button class="btn" id="addInventoryBtn" onclick="addInventory()">+ Add Item</button>
 </div>
 
-<div id="toast" class="toast"></div>
+<!-- Tasks -->
+<div id="tasks" class="section" style="display:none;">
+<h2>📝 Tasks</h2>
+<input type="text" id="taskSearch" placeholder="Search tasks..." onkeyup="renderTasks()"/>
+<ul id="taskList"></ul>
+<button class="btn" id="addTaskBtn" onclick="addTask()">+ Add Task</button>
+</div>
+</div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-/* ------------------------
-   Data & defaults
-   ------------------------ */
-const DEFAULT_INVENTORY = { Servo:3, Motor:5, Sensors:7 };
-const DEFAULT_TASKS = [
-  { name: "Build chassis (Jacob)", priority: "medium", assignee: "Jacob", status: "todo", due: null },
-  { name: "Wire motors (Kevin)", priority: "medium", assignee: "Kevin", status: "todo", due: null }
-];
-const DEFAULT_TEAM = ["Jacob","Kevin","Ava","Sam"];
+// ===== DATA =====
+let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-let inventory = JSON.parse(localStorage.getItem('inventory')) || DEFAULT_INVENTORY;
-let tasks = JSON.parse(localStorage.getItem('tasks')) || DEFAULT_TASKS.slice();
-let team = JSON.parse(localStorage.getItem('team')) || DEFAULT_TEAM.slice();
-let darkMode = localStorage.getItem('darkMode') === 'true';
-
-/* ------------------------
-   Utility & UI helpers
-   ------------------------ */
-function saveAll(){
-  localStorage.setItem('inventory', JSON.stringify(inventory));
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  localStorage.setItem('team', JSON.stringify(team));
-}
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.opacity = '1';
-  setTimeout(()=> t.style.opacity='0', 1600);
-}
-function closeModal(){document.getElementById('modal').style.display='none';}
-function openModal(html, onSave){ document.getElementById('modalContent').innerHTML = html; document.getElementById('modal').style.display='flex'; const btn=document.getElementById('modalSaveBtn'); btn.onclick = ()=> { onSave(); closeModal(); }; }
-
-/* ------------------------
-   Auth & initial UI
-   ------------------------ */
+// ===== LOGIN =====
 function signIn(){
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value.trim();
-  if(username && password){
-    localStorage.setItem('username', username);
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('welcomeCard').textContent = `Welcome, ${username}!`;
-    applyDarkMode();
-    renderAll();
-    showSection('dashboard');
-    showToast('Welcome, ' + username);
-  } else alert('Please enter username and password.');
+const username = document.getElementById('username').value.trim();
+const password = document.getElementById('password').value.trim();
+const role = document.getElementById('role').value;
+if(username && password){
+localStorage.setItem('username', username);
+localStorage.setItem('role', role);
+document.getElementById('loginScreen').style.display='none';
+document.getElementById('mainApp').style.display='block';
+document.getElementById('welcomeCard').textContent = `Welcome, ${username}! (${role})`;
+renderAll(); showSection('dashboard'); applyRoleRestrictions(); showToast('Signed in as '+username);
+}else alert("Enter username and password.");
 }
-function autofillDemo(){ document.getElementById('username').value='kevin'; document.getElementById('password').value='perez'; }
+function signOut(){ localStorage.removeItem('username'); localStorage.removeItem('role'); document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; showToast('Signed out'); }
+function autofillDemo(){ document.getElementById('username').value="demoUser"; document.getElementById('password').value="demoPass"; }
 
-/* ------------------------
-   Sections
-   ------------------------ */
-function showSection(id){
-  document.querySelectorAll('.section').forEach(s=> s.style.display='none');
-  const el = document.getElementById(id);
-  if(el) el.style.display='block';
-  // update dynamic content when switching
-  if(id === 'inventory') updateInventoryUI();
-  if(id === 'tasks') updateTasksUI();
-  if(id === 'dashboard') updateDashboard();
-  if(id === 'profile') document.getElementById('welcomeCard').textContent = `Welcome, ${localStorage.getItem('username') || 'User'}!`;
+// ===== ROLES =====
+function applyRoleRestrictions(){
+const role = localStorage.getItem('role');
+document.getElementById("addInventoryBtn").style.display=(role==='teacher')?"inline-block":"none";
+document.getElementById("addTaskBtn").style.display=(role==='teacher')?"inline-block":"none";
+renderAll(); updateChart(); updateAlerts(); enableDragDrop();
 }
+function toggleDarkMode(){ document.body.classList.toggle('dark'); }
+function switchRole(newRole){ localStorage.setItem('role', newRole); document.getElementById('welcomeCard').textContent = `Welcome, ${localStorage.getItem('username')}! (${newRole})`; applyRoleRestrictions(); showToast('Switched role to '+newRole); }
 
-/* ------------------------
-   Dark mode
-   ------------------------ */
-function toggleDarkMode(){ darkMode = !darkMode; localStorage.setItem('darkMode', darkMode); applyDarkMode(); showToast(darkMode ? 'Dark mode' : 'Light mode'); }
-function applyDarkMode(){ if(darkMode) document.body.classList.add('dark'); else document.body.classList.remove('dark'); }
+// ===== INVENTORY =====
+function renderInventory(){
+const search = document.getElementById("inventorySearch")?.value.toLowerCase()||"";
+const list = document.getElementById("inventoryList"); if(!list) return; list.innerHTML="";
+inventory.forEach((item, idx)=>{
+if(item.name.toLowerCase().includes(search)){
+const li = document.createElement("li");
+let lowStock = item.qty<=2 ? " 🔴" : "";
+li.innerHTML=`${item.name} (Qty: ${item.qty})${lowStock} ${localStorage.getItem('role')==='teacher'? `<button onclick="deleteInventory(${idx})">Delete</button>`:""}`;
+list.appendChild(li);
+}
+}); updateAlerts();
+}
+function addInventory(){ const name = prompt("Item name:"); const qty = parseInt(prompt("Quantity:"),10); if(name && !isNaN(qty)){ inventory.push({name,qty}); localStorage.setItem("inventory",JSON.stringify(inventory)); renderInventory(); showToast('Inventory added'); } }
+function deleteInventory(i){ inventory.splice(i,1); localStorage.setItem("inventory",JSON.stringify(inventory)); renderInventory(); showToast('Inventory deleted'); }
 
-/* ------------------------
-   Inventory UI & actions
-   ------------------------ */
-function updateInventoryUI(){
-  const container = document.getElementById('inventoryList');
-  container.innerHTML = '';
-  const q = (document.getElementById('invSearch')?.value || '').toLowerCase();
-  Object.keys(inventory).sort().forEach(key => {
-    if(q && !key.toLowerCase().includes(q)) return;
-    const qty = inventory[key];
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.style.display='flex';
-    card.style.justifyContent='space-between';
-    card.style.alignItems='center';
-    card.innerHTML = `<div><div style="font-weight:700">${key}</div><div class="muted small">${qty} in stock</div></div>`;
-    const controls = document.createElement('div');
-    const useBtn = document.createElement('button'); useBtn.className='btn'; useBtn.textContent='Use'; useBtn.onclick = ()=> useInventoryItem(key);
-    const editBtn = document.createElement('button'); editBtn.className='ghost'; editBtn.textContent='Edit'; editBtn.onclick = ()=> openEditInventory(key);
-    const delBtn = document.createElement('button'); delBtn.className='ghost'; delBtn.textContent='Delete'; delBtn.onclick = ()=> deleteInventory(key);
-    if(qty <= 0){ card.style.opacity = '0.6'; }
-    if(qty < 3){ card.querySelector('div').style.color = 'var(--danger)'; } // low stock highlight
-    controls.appendChild(useBtn); controls.appendChild(editBtn); controls.appendChild(delBtn);
-    card.appendChild(controls);
-    container.appendChild(card);
-  });
+// ===== TASKS =====
+function renderTasks(){
+const search=document.getElementById("taskSearch")?.value.toLowerCase()||"";
+const list=document.getElementById("taskList"); if(!list) return; list.innerHTML="";
+tasks.sort((a,b)=> new Date(a.due||0)-new Date(b.due||0));
+tasks.forEach((t, idx)=>{
+if(t.text.toLowerCase().includes(search)){
+const priorityClass = t.priority==='High'? 'priority-high': t.priority==='Medium'? 'priority-medium':'priority-low';
+const role = localStorage.getItem('role');
+const username = localStorage.getItem('username');
+const studentButton = (role==='student' && username===t.assignee && !t.done)? `<button onclick="completeTask(${idx})">Mark Done</button>`:"";
+const teacherButtons = (role==='teacher')? `<button onclick="deleteTask(${idx})">Delete</button>`:"";
+const dueText = t.due? ` | Due: ${t.due}`:"";
+const doneMark = t.done? " ✅":"";
+const li = document.createElement("li");
+li.dataset.index=idx;
+li.innerHTML=`<span class="${priorityClass}">${t.text} (assigned: ${t.assignee})${dueText}</span> ${teacherButtons} ${studentButton} ${doneMark}`;
+list.appendChild(li);
 }
-function openAddInventoryModal(){
-  openModal(`
-    <h3>Add Inventory Item</h3>
-    <input id="mi_name" placeholder="Item name" />
-    <input id="mi_qty" type="number" placeholder="Quantity" />
-  `, ()=> {
-    const name = document.getElementById('mi_name').value.trim();
-    const qty = parseInt(document.getElementById('mi_qty').value,10);
-    if(!name || isNaN(qty)){ alert('Provide name and quantity'); return; }
-    inventory[name] = (inventory[name] || 0) + qty;
-    saveAll(); updateInventoryUI(); showToast('Inventory added');
-  });
+}); updateChart(); updateAlerts(); enableDragDrop();
 }
-function openEditInventory(key){
-  openModal(`
-    <h3>Edit ${key}</h3>
-    <input id="mi_qty" type="number" value="${inventory[key]}" placeholder="Quantity" />
-  `, ()=> {
-    const qty = parseInt(document.getElementById('mi_qty').value,10);
-    if(isNaN(qty)) return;
-    inventory[key] = qty;
-    saveAll(); updateInventoryUI(); showToast('Inventory updated');
-  });
+function addTask(){ 
+const text = prompt("Task description:"); 
+const assignee = prompt("Assign to (username):");
+const priority = prompt("Priority: High / Medium / Low","Medium"); 
+const due = prompt("Due date (YYYY-MM-DD):","");
+if(text && assignee){ tasks.push({text,assignee,priority,done:false,due}); localStorage.setItem("tasks",JSON.stringify(tasks)); renderTasks(); showToast('Task added'); }
 }
-function deleteInventory(key){
-  if(confirm('Delete '+key+'?')){ delete inventory[key]; saveAll(); updateInventoryUI(); showToast('Deleted'); }
+function completeTask(i){ tasks[i].done=true; localStorage.setItem("tasks",JSON.stringify(tasks)); renderTasks(); showToast('Task completed'); }
+function deleteTask(i){ tasks.splice(i,1); localStorage.setItem("tasks",JSON.stringify(tasks)); renderTasks(); showToast('Task deleted'); }
+
+// ===== DASHBOARD =====
+let chart;
+function updateChart(){ const ctx=document.getElementById('taskChart')?.getContext('2d'); if(!ctx) return; const completed=tasks.filter(t=>t.done).length; const pending=tasks.filter(t=>!t.done).length; if(chart) chart.destroy(); chart=new Chart(ctx,{type:'doughnut',data:{labels:['Completed','Pending'],datasets:[{data:[completed,pending],backgroundColor:['#28a745','#dc3545']}]},options:{responsive:true}}); }
+
+// ===== ALERTS =====
+function updateAlerts(){
+const alertsDiv=document.getElementById('alerts'); if(!alertsDiv) return; alertsDiv.innerHTML="";
+const today=new Date(); 
+let playSound=false;
+tasks.forEach(t=>{
+if(!t.done && t.due && new Date(t.due)<today){
+const div=document.createElement("div"); div.className="alert"; div.textContent=`Overdue task: ${t.text} (assigned: ${t.assignee})`; alertsDiv.appendChild(div); playSound=true;
 }
-function useInventoryItem(key){
-  if(!inventory[key] || inventory[key] <= 0){ alert('No stock'); return; }
-  inventory[key] -= 1;
-  saveAll(); updateInventoryUI(); showToast(`Used 1 ${key}`);
+});
+inventory.forEach(item=>{
+if(item.qty<=2){ const div=document.createElement("div"); div.className="alert"; div.textContent=`Low stock: ${item.name} (${item.qty})`; alertsDiv.appendChild(div); playSound=true; }
+});
+if(playSound){ document.getElementById('alertSound')?.play(); }
 }
 
-/* ------------------------
-   Tasks UI & actions
-   ------------------------ */
-function updateTasksUI(){
-  // populate assignees select filters
-  const assigneeSel = document.getElementById('filterAssignee');
-  assigneeSel.innerHTML = '<option value="">All people</option>';
-  team.forEach(name => { const o = document.createElement('option'); o.textContent = name; assigneeSel.appendChild(o); });
-
-  // populate quick assignee
-  const quickAssignee = document.getElementById('quickTaskAssignee');
-  if(quickAssignee){
-    quickAssignee.innerHTML = '';
-    team.forEach(n=>{ const o=document.createElement('option'); o.textContent=n; quickAssignee.appendChild(o); });
-  }
-
-  const q = (document.getElementById('taskSearch')?.value || '').toLowerCase();
-  const filterPriority = (document.getElementById('filterPriority')?.value || '').toLowerCase();
-  const filterAss = (document.getElementById('filterAssignee')?.value || '');
-
-  ['todoList','inProgressList','doneList'].forEach(id=>document.getElementById(id).innerHTML='');
-
-  tasks.forEach((t, idx) => {
-    if(q && !t.name.toLowerCase().includes(q)) return;
-    if(filterPriority && t.priority.toLowerCase() !== filterPriority.toLowerCase()) return;
-    if(filterAss && t.assignee !== filterAss) return;
-
-    const li = document.createElement('li');
-    li.className = 'task';
-    li.draggable = true;
-    li.id = 'task-'+idx;
-    li.ondragstart = e => e.dataTransfer.setData('text/plain', idx);
-    li.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;">
-      <div style="display:flex;gap:8px;align-items:center;">
-        <div style="font-weight:700">${t.name}</div>
-        <div class="badge ${t.priority}">${t.priority.charAt(0).toUpperCase()+t.priority.slice(1)}</div>
-        <div class="muted small">${t.assignee ? '• ' + t.assignee : ''}</div>
-      </div>
-      <div class="muted small">${t.due ? 'Due: ' + t.due : ''}</div>
-    </div>`;
-
-    const controls = document.createElement('div');
-    controls.style.display = 'flex';
-    controls.style.gap = '6px';
-
-    const completeBtn = document.createElement('button'); completeBtn.className='btn'; completeBtn.textContent = t.status === 'done' ? '✓' : 'Complete';
-    completeBtn.onclick = ()=> completeTask(idx);
-
-    const editBtn = document.createElement('button'); editBtn.className='ghost'; editBtn.textContent='Edit';
-    editBtn.onclick = ()=> openEditTaskModal(idx);
-
-    const delBtn = document.createElement('button'); delBtn.className='ghost'; delBtn.textContent='Delete';
-    delBtn.onclick = ()=> { if(confirm('Delete task?')){ tasks.splice(idx,1); saveAll(); updateTasksUI(); updateDashboard(); showToast('Task deleted'); }};
-
-    controls.appendChild(completeBtn); controls.appendChild(editBtn); controls.appendChild(delBtn);
-    li.appendChild(controls);
-
-    if(t.status === 'todo') document.getElementById('todoList').appendChild(li);
-    else if(t.status === 'inprogress') document.getElementById('inProgressList').appendChild(li);
-    else document.getElementById('doneList').appendChild(li);
-  });
+// ===== DRAG & DROP =====
+function enableDragDrop(){
+const role = localStorage.getItem('role'); 
+if(role!=='teacher') return;
+const list=document.getElementById('taskList'); 
+if(!list) return;
+let dragged=null;
+[...list.children].forEach(li=>{
+li.draggable=true;
+li.addEventListener('dragstart', e=>{ dragged=li; li.classList.add('dragging'); });
+li.addEventListener('dragend', e=>{ dragged=null; li.classList.remove('dragging'); reorderTasks(); });
+li.addEventListener('dragover', e=>{ e.preventDefault(); const bounding = li.getBoundingClientRect(); const offset = e.clientY - bounding.top; if(offset>bounding.height/2){ li.after(dragged); }else{ li.before(dragged); } });
+});
+}
+function reorderTasks(){ 
+const newTasks=[]; 
+document.querySelectorAll('#taskList li').forEach(li=>{ 
+const idx=parseInt(li.dataset.index); 
+if(!isNaN(idx)) newTasks.push(tasks[idx]); 
+});
+tasks=newTasks;
+localStorage.setItem("tasks",JSON.stringify(tasks));
+renderTasks();
 }
 
-function openAddTaskModal(){
-  const teamOptions = team.map(t=>`<option>${t}</option>`).join('');
-  openModal(`
-    <h3>Create Task</h3>
-    <input id="t_name" placeholder="Task name" />
-    <select id="t_priority"><option>Medium</option><option>High</option><option>Low</option></select>
-    <select id="t_assignee"><option value="">Unassigned</option>${teamOptions}</select>
-    <input id="t_due" type="date" />
-  `, ()=> {
-    const name = document.getElementById('t_name').value.trim();
-    const priority = document.getElementById('t_priority').value.toLowerCase();
-    const assignee = document.getElementById('t_assignee').value || null;
-    const due = document.getElementById('t_due').value || null;
-    if(!name){ alert('Name required'); return; }
-    tasks.push({ name, priority, assignee, status: 'todo', due });
-    saveAll(); updateTasksUI(); updateDashboard(); showToast('Task added');
-  });
-}
+// ===== UTILS =====
+function renderAll(){ renderInventory(); renderTasks(); updateChart(); updateAlerts(); }
+function showSection(sectionId){ document.querySelectorAll('.section').forEach(s => s.style.display='none'); const sec = document.getElementById(sectionId); if(sec) sec.style.display='block'; }
+function showToast(msg){ const toast = document.getElementById('toast'); toast.textContent = msg; toast.style.display='block'; setTimeout(()=>{toast.style.display='none';},2000); }
 
-function openEditTaskModal(idx){
-  const t = tasks[idx];
-  const teamOptions = team.map(x=>`<option ${t.assignee===x?'selected':''}>${x}</option>`).join('');
-  openModal(`
-    <h3>Edit Task</h3>
-    <input id="t_name" value="${t.name}" />
-    <select id="t_priority"><option ${t.priority==='medium'?'selected':''}>Medium</option><option ${t.priority==='high'?'selected':''}>High</option><option ${t.priority==='low'?'selected':''}>Low</option></select>
-    <select id="t_assignee"><option value="">Unassigned</option>${teamOptions}</select>
-    <input id="t_due" type="date" value="${t.due || ''}" />
-  `, ()=> {
-    const name = document.getElementById('t_name').value.trim();
-    const priority = document.getElementById('t_priority').value.toLowerCase();
-    const assignee = document.getElementById('t_assignee').value || null;
-    const due = document.getElementById('t_due').value || null;
-    if(!name) return;
-    t.name = name; t.priority = priority; t.assignee = assignee; t.due = due;
-    saveAll(); updateTasksUI(); updateDashboard(); showToast('Task updated');
-  });
-}
-
-function completeTask(idx){
-  tasks[idx].status = 'done';
-  saveAll(); updateTasksUI(); updateDashboard(); showToast('Marked done');
-}
-
-/* Drag & Drop */
-function allowDrop(ev){ ev.preventDefault(); }
-function dropTask(ev, status){
-  ev.preventDefault();
-  const idx = parseInt(ev.dataTransfer.getData('text/plain'));
-  if(isNaN(idx)) return;
-  tasks[idx].status = status;
-  saveAll(); updateTasksUI(); updateDashboard(); showToast('Task moved');
-}
-
-/* ------------------------
-   Dashboard
-   ------------------------ */
-function updateDashboard(){
-  const total = tasks.length;
-  const doneCount = tasks.filter(t=>t.status==='done').length;
-  document.getElementById('statTasks').textContent = total;
-  document.getElementById('statInventory').textContent = Object.keys(inventory).length;
-  document.getElementById('statDone').textContent = doneCount;
-  const percent = total ? Math.round((doneCount/total)*100) : 0;
-  document.getElementById('overallProgress').style.width = percent + '%';
-  document.getElementById('progressPercent').textContent = percent + '% complete';
-}
-
-/* ------------------------
-   Export / Import / Reset
-   ------------------------ */
-function exportData(){
-  const payload = { inventory, tasks, team, darkMode };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'robohub-backup.json'; a.click();
-  URL.revokeObjectURL(url);
-  showToast('Export started');
-}
-
-function importData(event){
-  const file = event.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if(confirm('Import will overwrite current data. Continue?')){
-        inventory = data.inventory || {};
-        tasks = data.tasks || [];
-        team = data.team || DEFAULT_TEAM.slice();
-        darkMode = data.darkMode || false;
-        saveAll(); localStorage.setItem('darkMode', darkMode);
-        applyDarkMode(); renderAll(); showToast('Imported data');
-      }
-    } catch(err){ alert('Invalid file'); }
-  };
-  reader.readAsText(file);
-  event.target.value = ''; // clear
-}
-
-function resetData(){
-  if(!confirm('Reset everything to defaults?')) return;
-  inventory = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
-  tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
-  team = DEFAULT_TEAM.slice();
-  darkMode = false;
-  saveAll(); localStorage.setItem('darkMode', false); applyDarkMode(); renderAll(); showToast('Reset complete');
-}
-
-/* ------------------------
-   Quick helpers & UI
-   ------------------------ */
-function quickAddInventory(){
-  const name = document.getElementById('quickItemName').value.trim();
-  const qty = parseInt(document.getElementById('quickItemQty').value,10);
-  if(!name || isNaN(qty)) { alert('Provide name and qty'); return; }
-  inventory[name] = (inventory[name] || 0) + qty;
-  saveAll(); updateInventoryUI(); showToast('Quick inventory added');
-  document.getElementById('quickItemName').value=''; document.getElementById('quickItemQty').value='';
-}
-function quickAddTask(){
-  const name = document.getElementById('quickTaskName').value.trim();
-  const pr = document.getElementById('quickTaskPriority').value.toLowerCase();
-  const as = document.getElementById('quickTaskAssignee').value || null;
-  if(!name) { alert('Task name required'); return; }
-  tasks.push({ name, priority: pr, assignee: as, status:'todo', due: null });
-  saveAll(); updateTasksUI(); updateDashboard(); showToast('Quick task added');
-  document.getElementById('quickTaskName').value='';
-}
-
-/* ------------------------
-   Render all on load
-   ------------------------ */
-function renderAll(){
-  updateInventoryUI();
-  updateTasksUI();
-  updateDashboard();
-  // fill quick selects / filters
-  const quickAss = document.getElementById('quickTaskAssignee');
-  if(quickAss){ quickAss.innerHTML = ''; team.forEach(n=>{ const o=document.createElement('option'); o.textContent = n; quickAss.appendChild(o); }); }
-  const filterAss = document.getElementById('filterAssignee');
-  if(filterAss){ filterAss.innerHTML = '<option value="">All people</option>'; team.forEach(n=>{ const o=document.createElement('option'); o.textContent=n; filterAss.appendChild(o); }); }
-}
-/* ------------------------
-   Init on page load
-   ------------------------ */
+// ===== AUTO LOGIN =====
 window.onload = function(){
-  if(localStorage.getItem('username')){
-    document.getElementById('loginScreen').style.display='none';
-    document.getElementById('mainApp').style.display='block';
-    document.getElementById('welcomeCard').textContent = `Welcome, ${localStorage.getItem('username')}!`;
-    applyDarkMode();
-    renderAll();
-    showSection('dashboard');
-  } else {
-    document.getElementById('loginScreen').style.display='flex';
-    document.getElementById('mainApp').style.display='none';
-  }
-};
+    const user = localStorage.getItem('username');
+    if(user){
+        document.getElementById('loginScreen').style.display='none';
+        document.getElementById('mainApp').style.display='block';
+        document.getElementById('welcomeCard').textContent = `Welcome, ${user}! (${localStorage.getItem('role')})`;
+        renderAll(); applyRoleRestrictions(); showSection('dashboard');
+    }
+}
 </script>
 </body>
 </html>
