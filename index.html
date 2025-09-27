@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoboHub Ultimate</title>
+<title>🤖 RoboHub Ultimate</title>
 <style>
 body { font-family:'Segoe UI', sans-serif; margin:0; background:#0f0f20; color:#fff; overflow-x:hidden; transition:0.5s;}
 nav { background:#121232; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 0 20px #0ff;}
@@ -14,7 +14,7 @@ nav button:hover { box-shadow:0 0 15px #0ff; transform:scale(1.05);}
 .card:hover { box-shadow:0 0 25px #0ff; transform:scale(1.02);}
 ul { list-style:none; padding:0; }
 li { background:rgba(30,30,60,0.85); margin:5px 0; padding:8px; border-radius:5px; cursor:pointer; transition:0.3s;}
-li:hover { background:#0ff; color:#111; transform:scale(1.02);}
+li:hover { background:#0ff; color:#111; transform:scale(1.05); }
 input, select { width:100%; padding:6px; margin-bottom:10px; border-radius:5px; border:1px solid #0ff; background:#121232; color:white; transition:0.3s;}
 .btn { padding:6px 10px; border:none; border-radius:5px; background:#2575fc; color:white; cursor:pointer; margin-top:5px; transition:0.3s;}
 .btn:hover { box-shadow:0 0 15px #0ff; transform:scale(1.05);}
@@ -23,6 +23,8 @@ input, select { width:100%; padding:6px; margin-bottom:10px; border-radius:5px; 
 .light-mode input, .light-mode select { background:#eee; color:#111; border:1px solid #111; }
 #particleCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
 #toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; z-index:20; box-shadow:0 0 10px #0ff; }
+.sparkle { position:absolute; width:5px; height:5px; border-radius:50%; background:#0ff; pointer-events:none; animation:sparkleAnim 1s linear forwards;}
+@keyframes sparkleAnim {0%{opacity:1;}100%{opacity:0; transform:translateY(-20px) scale(2);}}
 </style>
 </head>
 <body>
@@ -44,7 +46,7 @@ input, select { width:100%; padding:6px; margin-bottom:10px; border-radius:5px; 
 <!-- MAIN APP -->
 <div id="mainApp" style="display:none;">
 <nav>
-  <div>🤖 RoboHub - <span id="navUser"></span></div>
+  <div>🤖 RoboHub - <span id="navUser"></span> (<span id="role">User</span>)</div>
   <div>
     <button onclick="toggleTheme()">🌓 Toggle Theme</button>
     <button onclick="signOut()" style="background:#ff4444;">Logout</button>
@@ -81,7 +83,7 @@ const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 let particles = [];
-for(let i=0;i<100;i++){ particles.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*2+1, dx:(Math.random()-0.5)*0.5, dy:(Math.random()-0.5)*0.5}); }
+for(let i=0;i<150;i++){ particles.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*2+1, dx:(Math.random()-0.5)*0.7, dy:(Math.random()-0.5)*0.7}); }
 function animateParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   particles.forEach(p=>{
@@ -98,7 +100,16 @@ window.onresize=()=>{canvas.width=window.innerWidth; canvas.height=window.innerH
 // APP LOGIC
 let inventory=[], tasks=[];
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>{t.style.display='none';},1500); }
-function signIn(){ const u=document.getElementById('username').value.trim(); if(!u){ alert("Enter username"); return;} document.getElementById('loginScreen').style.display='none'; document.getElementById('mainApp').style.display='block'; document.getElementById('navUser').textContent=u; renderAll(); showToast('Welcome '+u);}
+function signIn(){
+  const u=document.getElementById('username').value.trim();
+  const p=document.getElementById('password').value;
+  if(!u || !p){ alert("Enter username & password"); return;}
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  document.getElementById('navUser').textContent=u;
+  document.getElementById('role').textContent=(u.toLowerCase()==='admin')?'Admin':'User';
+  renderAll(); showToast('Welcome '+u);
+}
 function autofillDemo(){ document.getElementById('username').value="demoUser"; document.getElementById('password').value="demo"; }
 function signOut(){ document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; showToast('Signed out'); }
 function toggleTheme(){ document.body.classList.toggle('light-mode'); }
@@ -109,7 +120,7 @@ function renderInventory(){
     const li=document.createElement('li');
     li.textContent=item.name+' ('+item.quantity+')';
     li.onclick=()=>{
-      item.quantity--; if(item.quantity<=0) inventory.splice(i,1); renderAll(); showToast('Used 1 '+item.name);
+      item.quantity--; if(item.quantity<=0) inventory.splice(i,1); renderAll(); showToast('Used 1 '+item.name); createSparkle(li);
     }; list.appendChild(li);
   });
 }
@@ -118,7 +129,7 @@ function renderTasks(){
   const list=document.getElementById('taskList'); list.innerHTML='';
   tasks.forEach((t,i)=>{
     const li=document.createElement('li'); li.textContent=t.name+' ['+t.assignee+']';
-    li.onclick=()=>{ tasks.splice(i,1); renderAll(); showToast('Completed: '+t.name);}
+    li.onclick=()=>{ tasks.splice(i,1); renderAll(); showToast('Completed: '+t.name); createSparkle(li);}
     list.appendChild(li);
   });
 }
@@ -137,6 +148,15 @@ function restockAll(){ inventory.forEach(i=>i.quantity=5); renderAll(); showToas
 function generateRandomTask(){ const options=['Build Chassis','Wire Motors','Test Sensors','Calibrate Arm']; const n=options[Math.floor(Math.random()*options.length)]; tasks.push({name:n,assignee:'Auto'}); renderAll(); showToast('Random task added');}
 function clearTasks(){ tasks=[]; renderAll(); showToast('All tasks cleared'); }
 
+function createSparkle(element){
+  const sparkle=document.createElement('div');
+  sparkle.className='sparkle';
+  const rect=element.getBoundingClientRect();
+  sparkle.style.left=(rect.left+rect.width/2)+'px';
+  sparkle.style.top=(rect.top+rect.height/2)+'px';
+  document.body.appendChild(sparkle);
+  setTimeout(()=>{sparkle.remove();},1000);
+}
 </script>
 </body>
 </html>
