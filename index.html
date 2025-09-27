@@ -23,16 +23,13 @@ li.fade-out { opacity:0; transform:translateX(50px); }
 input, select { padding:8px; border-radius:6px; border:1px solid #0ff; margin-bottom:10px; width:100%; background:#121232; color:white; touch-action:manipulation; }
 .progress { height:10px; border-radius:5px; background:#222; margin-top:5px; overflow:hidden; }
 .progress-bar { height:100%; border-radius:5px; background:#0ff; transition:0.5s; }
-.priority-high { color:#ff4444; font-weight:bold; }
-.priority-medium { color:#ffc107; font-weight:bold; }
-.priority-low { color:#28a745; font-weight:bold; }
 #toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; z-index:20; box-shadow:0 0 10px #0ff; }
 canvas { max-width:100%; height:auto; border-radius:12px;}
 .popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#111133; padding:20px; border-radius:12px; box-shadow:0 0 30px #0ff; display:none; z-index:30; width:300px;}
 .popup input, .popup select{ width:100%; margin:5px 0;}
 .popup button { width:100%; margin-top:10px; }
 
-/* ===== DARK/LIGHT MODE ===== */
+/* DARK/LIGHT MODE */
 body.light-mode { background:#f0f0f0; color:#111; }
 body.light-mode .card { background:#fff; color:#111; box-shadow:0 0 20px rgba(0,0,0,0.2);}
 body.light-mode nav { background:#ddd; color:#111; box-shadow:0 3px 10px rgba(0,0,0,0.2);}
@@ -41,7 +38,7 @@ body.light-mode .btn { background:#2575fc; color:#fff;}
 body.light-mode li { background:#eee; color:#111;}
 body.light-mode #alerts { background:rgba(255,0,0,0.1); color:#111;}
 
-/* ===== MOBILE RESPONSIVE ===== */
+/* MOBILE RESPONSIVE */
 @media (max-width: 900px) {
   .container { grid-template-columns: 1fr; padding: 10px; }
   nav { flex-direction: column; align-items: flex-start; }
@@ -147,7 +144,21 @@ animateParticles();
 function particleIntensity(){ const intensity=tasks.length+inventory.length; particlesArray.forEach(p=>p.size=1+Math.random()*Math.min(3,intensity/5));}
 
 // ===== LOGIN =====
-function signIn(){ const username=document.getElementById('username').value.trim(); const password=document.getElementById('password').value.trim(); const role=document.getElementById('role').value; if(username && password){ localStorage.setItem('username',username); localStorage.setItem('role',role); document.getElementById('loginScreen').style.display='none'; document.getElementById('mainApp').style.display='block'; document.getElementById('navUser').textContent=username+' ('+role+')'; renderAll(); updateCharts(); showToast('Signed in as '+username);}else alert("Enter username and password.");}
+function signIn(){
+  const username=document.getElementById('username').value.trim();
+  const password=document.getElementById('password').value.trim();
+  const role=document.getElementById('role').value;
+  if(username && password){ // Accept any username/password
+    localStorage.setItem('username',username);
+    localStorage.setItem('role',role);
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('mainApp').style.display='block';
+    document.getElementById('navUser').textContent=username+' ('+role+')';
+    renderAll();
+    updateCharts();
+    showToast('Signed in as '+username);
+  }else{ alert("Enter username and password."); }
+}
 function signOut(){ localStorage.removeItem('username'); localStorage.removeItem('role'); document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; showToast('Signed out');}
 function autofillDemo(){ document.getElementById('username').value="demoUser"; document.getElementById('password').value="demoPass";}
 
