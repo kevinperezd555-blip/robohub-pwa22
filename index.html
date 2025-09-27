@@ -105,7 +105,6 @@ body.dark .toast{background:#084298;}
 <div class="toast" id="toast"></div>
 
 <script>
-// DOM
 const loginScreen=document.getElementById('loginScreen');
 const mainApp=document.getElementById('mainApp');
 const inventoryList=document.getElementById('inventoryList');
@@ -113,125 +112,24 @@ const todoList=document.getElementById('todoList');
 const inProgressList=document.getElementById('inProgressList');
 const doneList=document.getElementById('doneList');
 
-// Data
 let inventory=JSON.parse(localStorage.getItem('inventory'))||{Servo:3,Motor:5,Sensors:7};
 let tasks=JSON.parse(localStorage.getItem('tasks'))||[];
 let darkMode=localStorage.getItem('darkMode')==='true';
 if(darkMode) document.body.classList.add('dark');
 
-// Save
 function saveData(){localStorage.setItem('inventory',JSON.stringify(inventory));localStorage.setItem('tasks',JSON.stringify(tasks));}
-
-// Toast
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';setTimeout(()=>{t.style.opacity='0'},1500);}
-
-// Dark mode
 function toggleDarkMode(){document.body.classList.toggle('dark');darkMode=document.body.classList.contains('dark');localStorage.setItem('darkMode',darkMode);}
+function showSection(s){document.querySelectorAll('.section').forEach(div=>div.style.display='none');document.getElementById(s).style.display='block');}
 
-// Inventory
-function updateInventoryUI(){
-  const search=document.getElementById('searchInventory').value.toLowerCase();
-  inventoryList.innerHTML='';
-  for(let item in inventory){
-    if(!item.toLowerCase().includes(search)) continue;
-    const li=document.createElement('li');
-    li.textContent=`${item}: ${inventory[item]}`;
-    if(inventory[item]<3) li.style.color='red';
-    const btns=document.createElement('div');btns.className='btns';
-    btns.innerHTML=`<button class="edit" onclick="editInventory('${item}')">Edit</button>
-    <button class="delete" onclick="deleteInventory('${item}')">Delete</button>`;
-    li.appendChild(btns);inventoryList.appendChild(li);
-  }
-}
-
-// Tasks
-function updateTasksUI(){
-  const search=document.getElementById('searchTasks').value.toLowerCase();
-  todoList.innerHTML='';inProgressList.innerHTML='';doneList.innerHTML='';
-  tasks.forEach((task,index)=>{
-    if(!task.name.toLowerCase().includes(search)) return;
-    const li=document.createElement('li');
-    li.textContent=task.name;
-    const badge=document.createElement('span');badge.className='badge '+task.priority;badge.textContent=task.priority.charAt(0).toUpperCase()+task.priority.slice(1);
-    li.appendChild(badge);
-    if(task.due) li.append(' 📅'+task.due);
-    li.setAttribute('draggable','true');li.setAttribute('id','task-'+index);
-    li.ondragstart=e=>{e.dataTransfer.setData('text',index);e.target.style.opacity='0.5';};
-    li.ondragend=e=>{e.target.style.opacity='1';};
-    const btns=document.createElement('div');btns.className='btns';
-    btns.innerHTML=`<button class="edit" onclick="editTask(${index})">Edit</button>
-    <button class="delete" onclick="deleteTask(${index})">Delete</button>`;
-    li.appendChild(btns);
-    if(task.status==='todo') todoList.appendChild(li);
-    else if(task.status==='inprogress') inProgressList.appendChild(li);
-    else doneList.appendChild(li);
-  });
-}
-
-// Sections
-function showSection(s){document.querySelectorAll('.section').forEach(div=>div.style.display='none');document.getElementById(s).style.display='block';}
-
-// Login
 function signIn(){
   const username=document.getElementById('username').value.trim();
-  if(username){
+  const password=document.getElementById('password').value.trim();
+  if(username && password){
     localStorage.setItem('username',username);
     loginScreen.style.display='none';
     mainApp.style.display='flex';
     document.getElementById('welcomeMsg').textContent=`Welcome, ${username}!`;
-    updateInventoryUI();updateTasksUI();showSection('inventory');showToast('Logged in');
-  } else alert('Enter username');
-}
-function logOut(){localStorage.removeItem('username');loginScreen.style.display='flex';mainApp.style.display='none';showToast('Logged out');}
-
-// Inventory Actions
-function addInventory(){
-  const item=prompt('Item name');if(!item) return;
-  const qty=parseInt(prompt('Quantity'),10);if(isNaN(qty)) return;
-  inventory[item]=qty;saveData();updateInventoryUI();showToast('Inventory added');
-}
-function editInventory(item){
-  const qty=parseInt(prompt('Edit quantity for '+item,inventory[item]),10);if(isNaN(qty)) return;
-  inventory[item]=qty;saveData();updateInventoryUI();showToast('Inventory updated');
-}
-function deleteInventory(item){if(confirm('Delete '+item+'?')){delete inventory[item];saveData();updateInventoryUI();showToast('Inventory deleted');}}
-
-// Task Actions
-function addTask(){
-  const name=prompt('Task name');if(!name) return;
-  let priority=prompt('Priority (High, Medium, Low)','Medium');priority=priority.toLowerCase();
-  if(!['high','medium','low'].includes(priority)) priority='medium';
-  let due=prompt('Due date (optional, format YYYY-MM-DD)');if(due==='') due=null;
-  tasks.push({name,priority,status:'todo',due});
-  saveData();updateTasksUI();showToast('Task added');
-}
-function editTask(index){
-  const t=tasks[index];
-  const name=prompt('Edit name',t.name);if(!name) return;
-  let priority=prompt('Edit priority (High, Medium, Low)',t.priority);priority=priority.toLowerCase();
-  if(!['high','medium','low'].includes(priority)) priority=t.priority;
-  let due=prompt('Edit due date (YYYY-MM-DD)',t.due);if(due==='') due=null;
-  t.name=name;t.priority=priority;t.due=due;
-  saveData();updateTasksUI();showToast('Task updated');
-}
-function deleteTask(index){if(confirm('Delete task '+tasks[index].name+'?')){tasks.splice(index,1);saveData();updateTasksUI();showToast('Task deleted');}}
-
-// Drag & Drop
-function allowDrop(ev){ev.preventDefault();}
-function dropTask(ev,status){
-  ev.preventDefault();
-  const index=ev.dataTransfer.getData('text');tasks[index].status=status;saveData();updateTasksUI();showToast('Task moved');}
-
-// Search
-function filterInventory(){updateInventoryUI();}
-function filterTasks(){updateTasksUI();}
-
-// Reset
-function resetData(){if(confirm('Reset all data?')){localStorage.clear();inventory={Servo:3,Motor:5,Sensors:7};tasks=[];darkMode=false;document.body.classList.remove('dark');updateInventoryUI();updateTasksUI();showToast('Data reset');}}
-
-// Initialize
-if(localStorage.getItem('username')){loginScreen.style.display='none';mainApp.style.display='flex';document.getElementById('welcomeMsg').textContent=`Welcome, ${localStorage.getItem('username')}!`;updateInventoryUI();updateTasksUI();showSection('inventory');}
-</script>
-
-</body>
-</html>
+    updateInventoryUI();updateTasksUI();showSection('inventory');showToast('Logged in successfully');
+  } else {
+    alert('Please enter both username and password.');
