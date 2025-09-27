@@ -144,22 +144,21 @@ animateParticles();
 function particleIntensity(){ const intensity=tasks.length+inventory.length; particlesArray.forEach(p=>p.size=1+Math.random()*Math.min(3,intensity/5));}
 
 // ===== LOGIN =====
-function signIn(){
-  const username=document.getElementById('username').value.trim();
-  const password=document.getElementById('password').value.trim();
-  const role=document.getElementById('role').value;
-  if(username && password){ // Accept any username/password
-    localStorage.setItem('username',username);
-    localStorage.setItem('role',role);
-    document.getElementById('loginScreen').style.display='none';
-    document.getElementById('mainApp').style.display='block';
-    document.getElementById('navUser').textContent=username+' ('+role+')';
+function signIn() {
+  const username = document.getElementById('username').value.trim();
+  const role = document.getElementById('role').value || 'student';
+  if (username.length > 0) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('navUser').textContent = username + ' (' + role + ')';
     renderAll();
     updateCharts();
-    showToast('Signed in as '+username);
-  }else{ alert("Enter username and password."); }
+    showToast('Signed in as ' + username);
+  } else {
+    alert("Enter a username!");
+  }
 }
-function signOut(){ localStorage.removeItem('username'); localStorage.removeItem('role'); document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; showToast('Signed out');}
+function signOut(){ document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; showToast('Signed out');}
 function autofillDemo(){ document.getElementById('username').value="demoUser"; document.getElementById('password').value="demoPass";}
 
 // ===== CLICK SOUND =====
