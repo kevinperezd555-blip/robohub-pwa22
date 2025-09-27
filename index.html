@@ -87,9 +87,6 @@ li.completed{text-decoration:line-through;color:gray;opacity:0.7;}
 </div>
 
 <script>
-// Preset user
-const users = { 'kevin': 'perez' };
-
 const loginScreen = document.getElementById('loginScreen');
 const mainApp = document.getElementById('mainApp');
 const inventoryList = document.getElementById('inventoryList');
@@ -100,11 +97,13 @@ const doneList = document.getElementById('doneList');
 let inventory = JSON.parse(localStorage.getItem('inventory')) || { Servo: 3, Motor: 5, Sensors: 7 };
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
+// Save inventory and tasks
 function saveData() {
   localStorage.setItem('inventory', JSON.stringify(inventory));
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
+// Inventory UI
 function updateInventoryUI() {
   inventoryList.innerHTML = '';
   for (let item in inventory) {
@@ -119,6 +118,7 @@ function updateInventoryUI() {
   }
 }
 
+// Tasks UI
 function updateTasksUI() {
   todoList.innerHTML = '';
   inProgressList.innerHTML = '';
@@ -141,15 +141,17 @@ function updateTasksUI() {
   });
 }
 
+// Show section
 function showSection(section) {
   document.querySelectorAll('.section').forEach(div => div.style.display='none');
   document.getElementById(section).style.display='block';
 }
 
+// Login: accept anything
 function signIn() {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
-  if(users[username] && users[username] === password){
+  if(username){
     localStorage.setItem('username', username);
     loginScreen.style.display='none';
     mainApp.style.display='flex';
@@ -158,16 +160,18 @@ function signIn() {
     updateTasksUI();
     showSection('inventory');
   } else {
-    alert('Invalid username or password');
+    alert('Please enter a username');
   }
 }
 
+// Logout
 function logOut() {
   localStorage.removeItem('username');
   loginScreen.style.display='flex';
   mainApp.style.display='none';
 }
 
+// Inventory functions
 function addInventory() { 
   const item = prompt('Item name'); 
   const qty = parseInt(prompt('Quantity'),10); 
@@ -183,46 +187,5 @@ function deleteInventory(item) {
   if(confirm(`Delete ${item}?`)){ delete inventory[item]; saveData(); updateInventoryUI(); } 
 }
 
-function addTask() { 
-  const name = prompt('Task name'); 
-  if(!name) return; 
-  tasks.push({name, status:'todo'}); saveData(); updateTasksUI(); 
-}
-
-function editTask(index) { 
-  const name = prompt('Edit task:', tasks[index].name); 
-  if(name){ tasks[index].name=name; saveData(); updateTasksUI(); } 
-}
-
-function deleteTask(index) { 
-  if(confirm('Delete this task?')){ tasks.splice(index,1); saveData(); updateTasksUI(); } 
-}
-
-function allowDrop(ev){ ev.preventDefault(); }
-
-function dropTask(ev,status){ 
-  ev.preventDefault(); 
-  const index = parseInt(ev.dataTransfer.getData('text')); 
-  tasks[index].status = status; 
-  saveData(); 
-  updateTasksUI(); 
-}
-
-window.onload = function() {
-  const username = localStorage.getItem('username');
-  if(username){
-    loginScreen.style.display='none';
-    mainApp.style.display='flex';
-    document.getElementById('welcomeMsg').textContent = `Welcome, ${username}!`;
-    updateInventoryUI();
-    updateTasksUI();
-    showSection('inventory');
-  } else {
-    loginScreen.style.display='flex';
-    mainApp.style.display='none';
-  }
-}
-</script>
-
-</body>
-</html>
+// Task functions
+function add
