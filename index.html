@@ -14,26 +14,31 @@
     header {
       background: #007bff;
       color: white;
-      padding: 15px;
+      padding: 20px;
       text-align: center;
-      font-size: 1.5em;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      font-size: 1.6em;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 20px auto;
       padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     h2 {
       color: #333;
-      margin-top: 20px;
+      margin-top: 25px;
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 5px;
     }
     ul {
       list-style: none;
       padding: 0;
     }
     li {
-      background: white;
+      background: #fafafa;
       margin: 10px 0;
       padding: 12px;
       border-radius: 8px;
@@ -57,17 +62,19 @@
     button:hover {
       background: #0056b3;
     }
+    /* Login Screen */
     #loginScreen {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      background: #eaf1f8;
     }
     #loginScreen input {
-      margin: 5px 0;
+      margin: 6px 0;
       padding: 10px;
-      width: 220px;
+      width: 240px;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
@@ -75,8 +82,10 @@
       display: none;
     }
     .welcome {
-      margin: 15px 0;
+      margin: 10px 0;
       font-size: 1.2em;
+      font-weight: bold;
+      color: #007bff;
     }
   </style>
 </head>
@@ -212,4 +221,3 @@
 
 </body>
 </html>
-
