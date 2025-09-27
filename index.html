@@ -1,222 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RoboHub 🤖</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: #f0f4f8;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #007bff;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 1.6em;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
-    .container {
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    h2 {
-      color: #333;
-      margin-top: 25px;
-      border-bottom: 2px solid #007bff;
-      padding-bottom: 5px;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      background: #fafafa;
-      margin: 10px 0;
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      cursor: pointer;
-    }
-    li.completed {
-      text-decoration: line-through;
-      color: gray;
-    }
-    button {
-      margin: 10px 5px 0 0;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 6px;
-      background: #007bff;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    /* Login Screen */
-    #loginScreen {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #eaf1f8;
-    }
-    #loginScreen input {
-      margin: 6px 0;
-      padding: 10px;
-      width: 240px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    #mainApp {
-      display: none;
-    }
-    .welcome {
-      margin: 10px 0;
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #007bff;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoboHub 🤖 Ultimate</title>
+<style>
+body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:#f4f6f9;}
+header{background:#007bff;color:white;padding:15px;text-align:center;font-size:1.5em;box-shadow:0 2px 5px rgba(0,0,0,0.2);}
+#loginScreen{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:#eaf1f8;}
+#loginScreen input{margin:8px 0;padding:10px;width:250px;border:1px solid #ccc;border-radius:6px;}
+button.action{margin-top:10px;padding:10px 15px;background:#007bff;color:white;border:none;border-radius:6px;cursor:pointer;}
+button.action:hover{background:#0056b3;}
+#mainApp{display:none;}
+.app{display:flex;min-height:100vh;}
+nav{width:220px;background:#1e293b;color:white;padding:20px;display:flex;flex-direction:column;gap:15px;}
+nav button{background:none;border:none;color:white;text-align:left;padding:10px;border-radius:5px;cursor:pointer;font-size:1em;}
+nav button:hover{background:#334155;}
+.content{flex-grow:1;padding:20px;}
+h2{margin-top:0;color:#333;border-bottom:2px solid #007bff;padding-bottom:5px;}
+ul{list-style:none;padding:0;}
+li{background:white;margin:8px 0;padding:12px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;cursor:grab;}
+li.completed{text-decoration:line-through;color:gray;}
+.btns button{margin-left:5px;padding:5px 10px;border:none;border-radius:5px;cursor:pointer;font-size:0.9em;}
+.edit{background:#ffc107;color:black;} .delete{background:#dc3545;color:white;} .status{background:#28a745;color:white;}
+.edit:hover{background:#e0a800;} .delete:hover{background:#c82333;} .status:hover{background:#218838;}
+.section{display:none;}
+.welcome{margin:10px 0;font-size:1.2em;font-weight:bold;color:#007bff;}
+.columns{display:flex;gap:20px;}
+.column{flex:1;background:#f0f2f5;padding:10px;border-radius:8px;min-height:300px;}
+.column h3{text-align:center;}
+</style>
 </head>
 <body>
 
-<!-- Login Screen -->
 <div id="loginScreen">
-  <h2>🔐 RoboHub Login</h2>
-  <input type="text" id="username" placeholder="Enter username">
-  <input type="password" id="password" placeholder="Enter password">
-  <button onclick="signIn()">Sign In</button>
+<h2>🔐 RoboHub Login</h2>
+<input type="text" id="username" placeholder="Username">
+<input type="password" id="password" placeholder="Password">
+<button class="action" onclick="signIn()">Sign In</button>
 </div>
 
-<!-- Main App -->
 <div id="mainApp">
-  <header>RoboHub 🤖</header>
-  <div class="container">
-    <div class="welcome" id="welcomeMsg"></div>
-    <button onclick="logOut()">Log Out</button>
+<header>RoboHub 🤖 Ultimate</header>
+<div class="app">
+<nav>
+<button onclick="showSection('inventory')">📦 Inventory</button>
+<button onclick="showSection('tasks')">📝 Tasks</button>
+<button onclick="showSection('profile')">👤 Profile</button>
+</nav>
+<div class="content">
+<div id="inventory" class="section">
+<h2>📦 Inventory</h2>
+<ul id="inventoryList"></ul>
+<button class="action" onclick="addInventory()">Add Inventory</button>
+</div>
 
-    <h2>📦 Inventory</h2>
-    <ul id="inventory"></ul>
-    <button onclick="addInventory()">Add Inventory</button>
+<div id="tasks" class="section">
+<h2>📝 Task Board</h2>
+<div class="columns">
+<div class="column">
+<h3>To Do</h3>
+<ul id="todoList" ondragover="allowDrop(event)" ondrop="dropTask(event,'todo')"></ul>
+</div>
+<div class="column">
+<h3>In Progress</h3>
+<ul id="inProgressList" ondragover="allowDrop(event)" ondrop="dropTask(event,'inprogress')"></ul>
+</div>
+<div class="column">
+<h3>Done</h3>
+<ul id="doneList" ondragover="allowDrop(event)" ondrop="dropTask(event,'done')"></ul>
+</div>
+</div>
+<button class="action" onclick="addTask()">Add Task</button>
+</div>
 
-    <h2>📝 Task Board</h2>
-    <ul id="tasks"></ul>
-    <button onclick="addTask()">Add Task</button>
-  </div>
+<div id="profile" class="section">
+<h2>👤 Profile</h2>
+<div class="welcome" id="welcomeMsg"></div>
+<button class="action" onclick="logOut()">Log Out</button>
+</div>
+</div>
+</div>
 </div>
 
 <script>
-  const loginScreen = document.getElementById('loginScreen');
-  const mainApp = document.getElementById('mainApp');
-  const inventoryList = document.getElementById('inventory');
-  const tasksList = document.getElementById('tasks');
+const loginScreen=document.getElementById('loginScreen');
+const mainApp=document.getElementById('mainApp');
+const inventoryList=document.getElementById('inventoryList');
+const todoList=document.getElementById('todoList');
+const inProgressList=document.getElementById('inProgressList');
+const doneList=document.getElementById('doneList');
+const users={'admin':'1234','user':'password'};
 
-  let inventory = JSON.parse(localStorage.getItem('inventory')) || { Servo: 3, Motor: 5, Sensors: 7 };
-  let tasks = JSON.parse(localStorage.getItem('tasks')) || ["Build chassis (Jacob)", "Wire motors (Kevin)"];
+let inventory=JSON.parse(localStorage.getItem('inventory'))||{Servo:3,Motor:5,Sensors:7};
+let tasks=JSON.parse(localStorage.getItem('tasks'))||[];
 
-  function saveData() {
-    localStorage.setItem('inventory', JSON.stringify(inventory));
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+function saveData(){localStorage.setItem('inventory',JSON.stringify(inventory));localStorage.setItem('tasks',JSON.stringify(tasks));}
+
+function updateInventoryUI(){
+  inventoryList.innerHTML='';
+  for(let item in inventory){
+    const li=document.createElement('li'); li.textContent=`${item}: ${inventory[item]}`;
+    const btns=document.createElement('div'); btns.className='btns';
+    btns.innerHTML=`<button class="edit" onclick="editInventory('${item}')">Edit</button>
+                     <button class="delete" onclick="deleteInventory('${item}')">Delete</button>`;
+    li.appendChild(btns); inventoryList.appendChild(li);
   }
+}
 
-  function updateInventoryUI() {
-    inventoryList.innerHTML = '';
-    for (let item in inventory) {
-      const li = document.createElement('li');
-      li.textContent = `${item}: ${inventory[item]}`;
-      inventoryList.appendChild(li);
-    }
-  }
+function updateTasksUI(){
+  todoList.innerHTML=''; inProgressList.innerHTML=''; doneList.innerHTML='';
+  tasks.forEach((task,index)=>{
+    const li=document.createElement('li'); li.textContent=task.name; li.setAttribute('draggable','true'); li.setAttribute('id','task-'+index);
+    li.ondragstart=(e)=>{e.dataTransfer.setData('text',index);};
+    const btns=document.createElement('div'); btns.className='btns';
+    btns.innerHTML=`<button class="edit" onclick="editTask(${index})">Edit</button>
+                     <button class="delete" onclick="deleteTask(${index})">Delete</button>`;
+    li.appendChild(btns);
+    if(task.status==='todo') todoList.appendChild(li);
+    else if(task.status==='inprogress') inProgressList.appendChild(li);
+    else doneList.appendChild(li);
+  });
+}
 
-  function updateTasksUI() {
-    tasksList.innerHTML = '';
-    tasks.forEach((task, index) => {
-      const li = document.createElement('li');
-      li.textContent = task;
-      if (task.includes("✅")) li.classList.add("completed");
-      li.onclick = () => completeTask(index);
-      tasksList.appendChild(li);
-    });
-  }
+function showSection(section){document.querySelectorAll('.section').forEach(div=>div.style.display='none');document.getElementById(section).style.display='block';}
 
-  function showWelcome() {
-    const username = localStorage.getItem('username') || '';
-    document.getElementById('welcomeMsg').textContent = username ? `Welcome, ${username}!` : '';
-  }
+function signIn(){
+  const username=document.getElementById('username').value.trim();
+  const password=document.getElementById('password').value.trim();
+  if(users[username] && users[username]===password){
+    localStorage.setItem('username',username); loginScreen.style.display='none'; mainApp.style.display='flex';
+    document.getElementById('welcomeMsg').textContent=`Welcome, ${username}!`; updateInventoryUI(); updateTasksUI(); showSection('inventory');
+  } else { alert('Invalid username or password'); }
+}
 
-  function signIn() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
-    if (username && password) {
-      localStorage.setItem('username', username);
-      loginScreen.style.display = 'none';
-      mainApp.style.display = 'block';
-      showWelcome();
-      updateInventoryUI();
-      updateTasksUI();
-    } else {
-      alert('Enter both username and password');
-    }
-  }
+function logOut(){localStorage.removeItem('username'); loginScreen.style.display='flex'; mainApp.style.display='none';}
 
-  function logOut() {
-    localStorage.removeItem('username');
-    loginScreen.style.display = 'flex';
-    mainApp.style.display = 'none';
-  }
+function addInventory(){ const item=prompt('Item name'); const qty=parseInt(prompt('Quantity'),10); if(item && !isNaN(qty)){ inventory[item]=qty; saveData(); updateInventoryUI(); } }
+function editInventory(item){ const newQty=parseInt(prompt(`Edit quantity for ${item}:`,inventory[item]),10); if(!isNaN(newQty)){ inventory[item]=newQty; saveData(); updateInventoryUI(); } }
+function deleteInventory(item){ if(confirm(`Delete ${item}?`)){ delete inventory[item]; saveData(); updateInventoryUI(); } }
 
-  function addTask() {
-    const task = prompt('Enter new task');
-    if (task) {
-      tasks.push(task);
-      saveData();
-      updateTasksUI();
-    }
-  }
+function addTask(){ const name=prompt('Task name'); if(!name) return; tasks.push({name,status:'todo'}); saveData(); updateTasksUI(); }
+function editTask(index){ const name=prompt('Edit task:',tasks[index].name); if(name){ tasks[index].name=name; saveData(); updateTasksUI(); } }
+function deleteTask(index){ if(confirm('Delete this task?')){ tasks.splice(index,1); saveData(); updateTasksUI(); } }
 
-  function completeTask(index) {
-    if (!tasks[index].includes("✅")) {
-      tasks[index] += ' ✅';
-      saveData();
-      updateTasksUI();
-    }
-  }
+function allowDrop(ev){ ev.preventDefault(); }
+function dropTask(ev,status){ ev.preventDefault(); const index=parseInt(ev.dataTransfer.getData('text')); tasks[index].status=status; saveData(); updateTasksUI(); }
 
-  function addInventory() {
-    const item = prompt('Item name');
-    const qty = parseInt(prompt('Quantity'), 10);
-    if (item && !isNaN(qty)) {
-      if (inventory[item]) inventory[item] += qty;
-      else inventory[item] = qty;
-      saveData();
-      updateInventoryUI();
-    }
-  }
-
-  window.onload = function () {
-    const username = localStorage.getItem('username');
-    if (username) {
-      loginScreen.style.display = 'none';
-      mainApp.style.display = 'block';
-      showWelcome();
-      updateInventoryUI();
-      updateTasksUI();
-    } else {
-      loginScreen.style.display = 'flex';
-      mainApp.style.display = 'none';
-    }
-  };
+window.onload=function(){
+  const username=localStorage.getItem('username');
+  if(username){ loginScreen.style.display='none'; mainApp.style.display='flex';
+  document.getElementById('welcomeMsg').textContent=`Welcome, ${username}!`; updateInventoryUI(); updateTasksUI(); showSection('inventory'); }
+  else { loginScreen.style.display='flex'; mainApp.style.display='none'; }
+}
 </script>
 
 </body>
