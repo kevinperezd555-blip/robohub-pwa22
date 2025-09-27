@@ -3,34 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d6efd">
 <title>RoboHub 🤖 Ultimate</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#007bff">
 <style>
-body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:#f4f6f9;}
-header{background:#007bff;color:white;padding:15px;text-align:center;font-size:1.5em;box-shadow:0 2px 5px rgba(0,0,0,0.2);}
-#loginScreen{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:#eaf1f8;}
-#loginScreen input{margin:8px 0;padding:10px;width:250px;border:1px solid #ccc;border-radius:6px;}
-button.action{margin-top:10px;padding:10px 15px;background:#007bff;color:white;border:none;border-radius:6px;cursor:pointer;}
-button.action:hover{background:#0056b3;}
-#mainApp{display:none;}
-.app{display:flex;min-height:100vh;}
-nav{width:220px;background:#1e293b;color:white;padding:20px;display:flex;flex-direction:column;gap:15px;}
-nav button{background:none;border:none;color:white;text-align:left;padding:10px;border-radius:5px;cursor:pointer;font-size:1em;}
-nav button:hover{background:#334155;}
-.content{flex-grow:1;padding:20px;}
-h2{margin-top:0;color:#333;border-bottom:2px solid #007bff;padding-bottom:5px;}
+body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:#f5f6fa;color:#333;transition:0.3s;}
+header{background:#0d6efd;color:white;padding:18px;text-align:center;font-size:1.7em;font-weight:bold;box-shadow:0 3px 6px rgba(0,0,0,0.15);}
+#loginScreen{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:#e8f0fe;transition:0.3s;}
+#loginScreen input{margin:8px 0;padding:12px;width:260px;border:1px solid #ccc;border-radius:8px;font-size:1em;transition:0.3s;}
+button.action{margin-top:12px;padding:12px 20px;background:#0d6efd;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:bold;transition:0.3s;}
+button.action:hover{background:#084298;transform:scale(1.05);}
+#mainApp{display:none;transition:0.3s;}
+.app{display:flex;min-height:100vh;transition:0.3s;}
+nav{width:220px;background:#212529;color:white;padding:20px;display:flex;flex-direction:column;gap:15px;transition:0.3s;}
+nav button{background:none;border:none;color:white;text-align:left;padding:12px;border-radius:6px;cursor:pointer;font-size:1.05em;transition:0.3s;}
+nav button:hover{background:#343a40;transform:scale(1.03);}
+.content{flex-grow:1;padding:25px;background:#f5f6fa;transition:0.3s;}
+h2{margin-top:0;color:#0d6efd;border-bottom:3px solid #0d6efd;padding-bottom:5px;transition:0.3s;}
 ul{list-style:none;padding:0;}
-li{background:white;margin:8px 0;padding:12px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;cursor:grab;}
-li.completed{text-decoration:line-through;color:gray;}
-.btns button{margin-left:5px;padding:5px 10px;border:none;border-radius:5px;cursor:pointer;font-size:0.9em;}
-.edit{background:#ffc107;color:black;} .delete{background:#dc3545;color:white;} .status{background:#28a745;color:white;}
-.edit:hover{background:#e0a800;} .delete:hover{background:#c82333;} .status:hover{background:#218838;}
-.section{display:none;}
-.welcome{margin:10px 0;font-size:1.2em;font-weight:bold;color:#007bff;}
-.columns{display:flex;gap:20px;}
-.column{flex:1;background:#f0f2f5;padding:10px;border-radius:8px;min-height:300px;}
-.column h3{text-align:center;}
+li{background:white;margin:10px 0;padding:14px;border-radius:10px;box-shadow:0 3px 6px rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;cursor:grab;transition:0.3s;}
+li:hover{transform:scale(1.03);box-shadow:0 6px 12px rgba(0,0,0,0.15);}
+li.completed{text-decoration:line-through;color:gray;opacity:0.7;}
+.btns button{margin-left:6px;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:0.9em;transition:0.3s;}
+.edit{background:#ffc107;color:black;} .delete{background:#dc3545;color:white;}
+.edit:hover{background:#e0a800;transform:scale(1.1);} .delete:hover{background:#c82333;transform:scale(1.1);}
+.section{display:none;transition:0.3s;}
+.welcome{margin:15px 0;font-size:1.3em;font-weight:bold;color:#0d6efd;background:white;padding:15px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.columns{display:flex;gap:20px;flex-wrap:wrap;transition:0.3s;}
+.column{flex:1;background:#f8f9fa;padding:12px;border-radius:10px;min-height:320px;transition:0.3s;}
+.column h3{text-align:center;margin-bottom:10px;}
+@media(max-width:900px){.app{flex-direction:column;} nav{width:100%;flex-direction:row;overflow-x:auto;} nav button{flex:1;text-align:center;}}
 </style>
 </head>
 <body>
@@ -86,8 +87,8 @@ li.completed{text-decoration:line-through;color:gray;}
 </div>
 
 <script>
-// Preset users with updated credentials
-const users = { 'admin': 'adminkevin' };
+// Preset user
+const users = { 'kevin': 'perez' };
 
 const loginScreen = document.getElementById('loginScreen');
 const mainApp = document.getElementById('mainApp');
@@ -127,7 +128,8 @@ function updateTasksUI() {
     li.textContent = task.name;
     li.setAttribute('draggable','true');
     li.setAttribute('id','task-'+index);
-    li.ondragstart = (e) => { e.dataTransfer.setData('text', index); };
+    li.ondragstart = (e) => { e.dataTransfer.setData('text', index); e.target.style.opacity='0.5'; };
+    li.ondragend = (e) => { e.target.style.opacity='1'; };
     const btns = document.createElement('div');
     btns.className = 'btns';
     btns.innerHTML = `<button class="edit" onclick="editTask(${index})">Edit</button>
@@ -204,15 +206,6 @@ function dropTask(ev,status){
   tasks[index].status = status; 
   saveData(); 
   updateTasksUI(); 
-}
-
-// Service Worker registration for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('Service Worker registered:', reg.scope))
-      .catch(err => console.log('Service Worker registration failed:', err));
-  });
 }
 
 window.onload = function() {
