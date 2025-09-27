@@ -3,27 +3,33 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RoboHub Ultimate Pro+</title>
+<title>RoboHub Ultimate</title>
 <style>
-body { font-family: Arial, sans-serif; margin:0; background:#f4f4f4; transition:0.3s; }
+body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; background:#f4f4f4; transition:0.3s; }
 body.dark { background:#1a1a1a; color:white; }
-nav { background:#222; color:white; display:flex; gap:10px; padding:10px; flex-wrap:wrap; }
-nav button, nav label { background:none; border:none; color:white; cursor:pointer; }
-.container { padding:20px; }
-.card { background:white; padding:20px; margin-bottom:20px; border-radius:8px; transition:0.3s; }
-body.dark .card { background:#333; }
-.btn { background:#007bff; color:white; border:none; padding:8px 12px; cursor:pointer; border-radius:4px; }
-.ghost { background:#ddd; border:none; padding:8px 12px; cursor:pointer; border-radius:4px; }
-input, select { padding:8px; border-radius:4px; border:1px solid #ccc; }
+nav { background:#2575fc; color:white; display:flex; justify-content:space-between; align-items:center; padding:10px 20px; position:sticky; top:0; box-shadow:0 3px 10px rgba(0,0,0,0.2); z-index:10; }
+nav button { border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.3s; }
+nav button:hover { opacity:0.8; }
+.container { display:grid; grid-template-columns:1fr 1fr; gap:20px; padding:20px; }
+.card { background:white; padding:20px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition:0.3s; }
+body.dark .card { background:#333; color:white; }
 ul { list-style:none; padding:0; }
-li { padding:6px 0; display:flex; justify-content:space-between; align-items:center; cursor:grab; }
+li { background:#f4f4f4; margin:5px 0; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; cursor:grab; transition:0.2s; }
 li.dragging { opacity:0.5; }
+li:hover { background:#e0e0e0; }
+body.dark li { background:#444; }
+body.dark li:hover { background:#555; }
+.btn { background:#2575fc; color:white; border:none; padding:10px 14px; border-radius:6px; cursor:pointer; transition:0.3s; }
+.btn:hover { background:#6a11cb; }
+.ghost { background:#eee; color:#333; border:none; padding:10px 14px; border-radius:6px; cursor:pointer; transition:0.3s; }
+.ghost:hover { background:#ddd; }
 .priority-high { color:#dc3545; font-weight:bold; }
 .priority-medium { color:#ffc107; font-weight:bold; }
 .priority-low { color:#28a745; font-weight:bold; }
-#toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; }
+#toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; z-index:20; }
+.alert { background:#dc3545; color:white; padding:10px; margin-bottom:10px; border-radius:6px; box-shadow:0 3px 10px rgba(0,0,0,0.2); }
 canvas { max-width:100%; height:auto; }
-.alert { background:#dc3545; color:white; padding:8px; margin-bottom:10px; border-radius:5px; position:relative; }
+input, select { padding:10px; border-radius:6px; border:1px solid #ccc; margin-bottom:10px; width:100%; }
 </style>
 </head>
 <body>
@@ -31,57 +37,51 @@ canvas { max-width:100%; height:auto; }
 <audio id="alertSound" src="https://www.myinstants.com/media/sounds/bleep.mp3"></audio>
 <div id="toast"></div>
 
-<!-- LOGIN -->
-<div id="loginScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:10px;">
-<h1>🔐 RoboHub Ultimate Pro+</h1>
-<input id="username" placeholder="Username"/>
-<input id="password" placeholder="Password" type="password"/>
-<select id="role">
-<option value="student">Student</option>
-<option value="teacher">Teacher</option>
-</select>
-<div style="display:flex;gap:10px;">
-<button class="btn" onclick="signIn()">Sign In</button>
-<button class="ghost" onclick="autofillDemo()">Quick demo</button>
-</div>
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" style="display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%);">
+  <div style="background:white;padding:40px 50px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.2);width:350px; text-align:center;">
+    <h1 style="margin-bottom:20px;color:#2575fc;">🤖 RoboHub</h1>
+    <input id="username" placeholder="Username"/>
+    <input id="password" type="password" placeholder="Password"/>
+    <select id="role">
+      <option value="student">Student</option>
+      <option value="teacher">Teacher</option>
+    </select>
+    <button class="btn" onclick="signIn()" style="width:100%;margin-top:10px;">Sign In</button>
+    <button class="ghost" onclick="autofillDemo()" style="width:100%;margin-top:10px;">Quick Demo</button>
+  </div>
 </div>
 
-<!-- APP -->
+<!-- MAIN APP -->
 <div id="mainApp" style="display:none;">
 <nav>
-<button onclick="showSection('dashboard')">Dashboard</button>
-<button onclick="showSection('inventory')">Inventory</button>
-<button onclick="showSection('tasks')">Tasks</button>
-<button onclick="toggleDarkMode()">🌓 Dark Mode</button>
-<button onclick="signOut()">Logout</button>
+  <div style="font-weight:bold;font-size:18px;">🤖 RoboHub - <span id="navUser"></span></div>
+  <div>
+    <button onclick="toggleDarkMode()">🌓 Dark Mode</button>
+    <button onclick="signOut()" style="background:#dc3545;">Logout</button>
+  </div>
 </nav>
 <div class="container">
-<div class="card" id="welcomeCard">Welcome to RoboHub Ultimate Pro+</div>
+  <div class="card" id="alerts"></div>
 
-<!-- Alerts -->
-<div id="alerts" class="card"></div>
+  <div class="card">
+    <h2>📦 Inventory</h2>
+    <input type="text" id="inventorySearch" placeholder="Search inventory..." onkeyup="renderInventory()"/>
+    <ul id="inventoryList"></ul>
+    <button class="btn" id="addInventoryBtn" onclick="addInventory()">+ Add Item</button>
+  </div>
 
-<!-- Dashboard -->
-<div id="dashboard" class="section">
-<h2>📊 Dashboard</h2>
-<canvas id="taskChart"></canvas>
-</div>
+  <div class="card">
+    <h2>📝 Tasks</h2>
+    <input type="text" id="taskSearch" placeholder="Search tasks..." onkeyup="renderTasks()"/>
+    <ul id="taskList"></ul>
+    <button class="btn" id="addTaskBtn" onclick="addTask()">+ Add Task</button>
+  </div>
 
-<!-- Inventory -->
-<div id="inventory" class="section" style="display:none;">
-<h2>📦 Inventory</h2>
-<input type="text" id="inventorySearch" placeholder="Search inventory..." onkeyup="renderInventory()"/>
-<ul id="inventoryList"></ul>
-<button class="btn" id="addInventoryBtn" onclick="addInventory()">+ Add Item</button>
-</div>
-
-<!-- Tasks -->
-<div id="tasks" class="section" style="display:none;">
-<h2>📝 Tasks</h2>
-<input type="text" id="taskSearch" placeholder="Search tasks..." onkeyup="renderTasks()"/>
-<ul id="taskList"></ul>
-<button class="btn" id="addTaskBtn" onclick="addTask()">+ Add Task</button>
-</div>
+  <div class="card" style="grid-column:span 2;">
+    <h2>📊 Dashboard</h2>
+    <canvas id="taskChart"></canvas>
+  </div>
 </div>
 </div>
 
@@ -90,6 +90,26 @@ canvas { max-width:100%; height:auto; }
 // ===== DATA =====
 let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+// ===== DEMO DATA =====
+if(!localStorage.getItem("inventory")){
+    inventory = [
+        {name:"Servo", qty:3},
+        {name:"Motor", qty:5},
+        {name:"Sensor", qty:7},
+        {name:"Battery", qty:2}
+    ];
+    localStorage.setItem("inventory", JSON.stringify(inventory));
+}
+if(!localStorage.getItem("tasks")){
+    tasks = [
+        {text:"Build chassis", assignee:"Jacob", priority:"High", done:false, due:"2025-09-30"},
+        {text:"Wire motors", assignee:"Kevin", priority:"Medium", done:false, due:"2025-09-28"},
+        {text:"Test sensors", assignee:"Alex", priority:"Low", done:false, due:"2025-10-01"},
+        {text:"Update firmware", assignee:"Sam", priority:"High", done:false, due:"2025-09-29"}
+    ];
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
 // ===== LOGIN =====
 function signIn(){
@@ -101,8 +121,8 @@ localStorage.setItem('username', username);
 localStorage.setItem('role', role);
 document.getElementById('loginScreen').style.display='none';
 document.getElementById('mainApp').style.display='block';
-document.getElementById('welcomeCard').textContent = `Welcome, ${username}! (${role})`;
-renderAll(); showSection('dashboard'); applyRoleRestrictions(); showToast('Signed in as '+username);
+document.getElementById('navUser').textContent=username+' ('+role+')';
+renderAll(); applyRoleRestrictions(); showToast('Signed in as '+username);
 }else alert("Enter username and password.");
 }
 function signOut(){ localStorage.removeItem('username'); localStorage.removeItem('role'); document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; showToast('Signed out'); }
@@ -116,7 +136,6 @@ document.getElementById("addTaskBtn").style.display=(role==='teacher')?"inline-b
 renderAll(); updateChart(); updateAlerts(); enableDragDrop();
 }
 function toggleDarkMode(){ document.body.classList.toggle('dark'); }
-function switchRole(newRole){ localStorage.setItem('role', newRole); document.getElementById('welcomeCard').textContent = `Welcome, ${localStorage.getItem('username')}! (${newRole})`; applyRoleRestrictions(); showToast('Switched role to '+newRole); }
 
 // ===== INVENTORY =====
 function renderInventory(){
@@ -138,7 +157,7 @@ function deleteInventory(i){ inventory.splice(i,1); localStorage.setItem("invent
 function renderTasks(){
 const search=document.getElementById("taskSearch")?.value.toLowerCase()||"";
 const list=document.getElementById("taskList"); if(!list) return; list.innerHTML="";
-tasks.sort((a,b)=> new Date(a.due||0)-new Date(b.due||0));
+tasks.sort((a,b)=> new Date(a.due||0)- new Date(b.due||0));
 tasks.forEach((t, idx)=>{
 if(t.text.toLowerCase().includes(search)){
 const priorityClass = t.priority==='High'? 'priority-high': t.priority==='Medium'? 'priority-medium':'priority-low';
@@ -165,10 +184,6 @@ if(text && assignee){ tasks.push({text,assignee,priority,done:false,due}); local
 function completeTask(i){ tasks[i].done=true; localStorage.setItem("tasks",JSON.stringify(tasks)); renderTasks(); showToast('Task completed'); }
 function deleteTask(i){ tasks.splice(i,1); localStorage.setItem("tasks",JSON.stringify(tasks)); renderTasks(); showToast('Task deleted'); }
 
-// ===== DASHBOARD =====
-let chart;
-function updateChart(){ const ctx=document.getElementById('taskChart')?.getContext('2d'); if(!ctx) return; const completed=tasks.filter(t=>t.done).length; const pending=tasks.filter(t=>!t.done).length; if(chart) chart.destroy(); chart=new Chart(ctx,{type:'doughnut',data:{labels:['Completed','Pending'],datasets:[{data:[completed,pending],backgroundColor:['#28a745','#dc3545']}]},options:{responsive:true}}); }
-
 // ===== ALERTS =====
 function updateAlerts(){
 const alertsDiv=document.getElementById('alerts'); if(!alertsDiv) return; alertsDiv.innerHTML="";
@@ -183,6 +198,14 @@ inventory.forEach(item=>{
 if(item.qty<=2){ const div=document.createElement("div"); div.className="alert"; div.textContent=`Low stock: ${item.name} (${item.qty})`; alertsDiv.appendChild(div); playSound=true; }
 });
 if(playSound){ document.getElementById('alertSound')?.play(); }
+}
+
+// ===== CHART =====
+function updateChart(){
+const ctx=document.getElementById("taskChart"); if(!ctx) return;
+const done = tasks.filter(t=>t.done).length;
+const pending = tasks.length - done;
+new Chart(ctx,{type:'doughnut',data:{labels:['Done','Pending'],datasets:[{data:[done,pending],backgroundColor:['#28a745','#ffc107']}]},options:{responsive:true}});
 }
 
 // ===== DRAG & DROP =====
@@ -210,19 +233,18 @@ localStorage.setItem("tasks",JSON.stringify(tasks));
 renderTasks();
 }
 
-// ===== UTILS =====
-function renderAll(){ renderInventory(); renderTasks(); updateChart(); updateAlerts(); }
-function showSection(sectionId){ document.querySelectorAll('.section').forEach(s => s.style.display='none'); const sec = document.getElementById(sectionId); if(sec) sec.style.display='block'; }
+// ===== TOAST =====
 function showToast(msg){ const toast = document.getElementById('toast'); toast.textContent = msg; toast.style.display='block'; setTimeout(()=>{toast.style.display='none';},2000); }
 
-// ===== AUTO LOGIN =====
+// ===== INIT =====
+function renderAll(){ renderInventory(); renderTasks(); updateChart(); updateAlerts(); }
 window.onload = function(){
     const user = localStorage.getItem('username');
     if(user){
         document.getElementById('loginScreen').style.display='none';
         document.getElementById('mainApp').style.display='block';
-        document.getElementById('welcomeCard').textContent = `Welcome, ${user}! (${localStorage.getItem('role')})`;
-        renderAll(); applyRoleRestrictions(); showSection('dashboard');
+        document.getElementById('navUser').textContent = user+' ('+localStorage.getItem('role')+')';
+        renderAll(); applyRoleRestrictions();
     }
 }
 </script>
