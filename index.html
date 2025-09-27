@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RoboHub Ultimate</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoboHub Ultimate Pro</title>
 <style>
+/* ===== GLOBAL ===== */
 body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; background:#f4f4f4; transition:0.3s; }
 body.dark { background:#1a1a1a; color:white; }
 nav { background:#2575fc; color:white; display:flex; justify-content:space-between; align-items:center; padding:10px 20px; position:sticky; top:0; box-shadow:0 3px 10px rgba(0,0,0,0.2); z-index:10; }
 nav button { border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.3s; }
 nav button:hover { opacity:0.8; }
+#alerts { padding:10px 20px; background:#ffdddd; margin:10px 20px; border-radius:8px; max-height:100px; overflow-y:auto; box-shadow:0 3px 10px rgba(0,0,0,0.2); }
+#alerts .alert { margin:5px 0; padding:5px 10px; border-radius:6px; background:#dc3545; color:white; }
 .container { display:grid; grid-template-columns:1fr 1fr; gap:20px; padding:20px; }
-.card { background:white; padding:20px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition:0.3s; }
+.card { background:white; padding:20px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.1); transition:0.3s; }
 body.dark .card { background:#333; color:white; }
-ul { list-style:none; padding:0; }
+ul { list-style:none; padding:0; max-height:300px; overflow-y:auto; }
 li { background:#f4f4f4; margin:5px 0; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; cursor:grab; transition:0.2s; }
 li.dragging { opacity:0.5; }
 li:hover { background:#e0e0e0; }
 body.dark li { background:#444; }
 body.dark li:hover { background:#555; }
-.btn { background:#2575fc; color:white; border:none; padding:10px 14px; border-radius:6px; cursor:pointer; transition:0.3s; }
+.btn { background:#2575fc; color:white; border:none; padding:10px 14px; border-radius:6px; cursor:pointer; transition:0.3s; margin-top:5px; }
 .btn:hover { background:#6a11cb; }
-.ghost { background:#eee; color:#333; border:none; padding:10px 14px; border-radius:6px; cursor:pointer; transition:0.3s; }
-.ghost:hover { background:#ddd; }
+input, select { padding:8px; border-radius:6px; border:1px solid #ccc; margin-bottom:10px; width:100%; }
+.progress { height:10px; border-radius:5px; background:#eee; margin-top:5px; overflow:hidden; }
+.progress-bar { height:100%; border-radius:5px; }
 .priority-high { color:#dc3545; font-weight:bold; }
 .priority-medium { color:#ffc107; font-weight:bold; }
 .priority-low { color:#28a745; font-weight:bold; }
 #toast { position:fixed; bottom:10px; right:10px; background:#222; color:white; padding:10px 15px; border-radius:5px; display:none; z-index:20; }
-.alert { background:#dc3545; color:white; padding:10px; margin-bottom:10px; border-radius:6px; box-shadow:0 3px 10px rgba(0,0,0,0.2); }
 canvas { max-width:100%; height:auto; }
-input, select { padding:10px; border-radius:6px; border:1px solid #ccc; margin-bottom:10px; width:100%; }
 </style>
 </head>
 <body>
@@ -40,7 +42,7 @@ input, select { padding:10px; border-radius:6px; border:1px solid #ccc; margin-b
 <!-- LOGIN SCREEN -->
 <div id="loginScreen" style="display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%);">
   <div style="background:white;padding:40px 50px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.2);width:350px; text-align:center;">
-    <h1 style="margin-bottom:20px;color:#2575fc;">🤖 RoboHub</h1>
+    <h1 style="margin-bottom:20px;color:#2575fc;">🤖 RoboHub Ultimate</h1>
     <input id="username" placeholder="Username"/>
     <input id="password" type="password" placeholder="Password"/>
     <select id="role">
@@ -48,7 +50,7 @@ input, select { padding:10px; border-radius:6px; border:1px solid #ccc; margin-b
       <option value="teacher">Teacher</option>
     </select>
     <button class="btn" onclick="signIn()" style="width:100%;margin-top:10px;">Sign In</button>
-    <button class="ghost" onclick="autofillDemo()" style="width:100%;margin-top:10px;">Quick Demo</button>
+    <button class="btn" style="background:#6a11cb;" onclick="autofillDemo()">Quick Demo</button>
   </div>
 </div>
 
@@ -61,9 +63,11 @@ input, select { padding:10px; border-radius:6px; border:1px solid #ccc; margin-b
     <button onclick="signOut()" style="background:#dc3545;">Logout</button>
   </div>
 </nav>
-<div class="container">
-  <div class="card" id="alerts"></div>
 
+<div id="alerts"></div>
+
+<div class="container">
+  <!-- Inventory -->
   <div class="card">
     <h2>📦 Inventory</h2>
     <input type="text" id="inventorySearch" placeholder="Search inventory..." onkeyup="renderInventory()"/>
@@ -71,13 +75,15 @@ input, select { padding:10px; border-radius:6px; border:1px solid #ccc; margin-b
     <button class="btn" id="addInventoryBtn" onclick="addInventory()">+ Add Item</button>
   </div>
 
+  <!-- Tasks -->
   <div class="card">
-    <h2>📝 Tasks</h2>
+    <h2>📝 Task Board</h2>
     <input type="text" id="taskSearch" placeholder="Search tasks..." onkeyup="renderTasks()"/>
     <ul id="taskList"></ul>
     <button class="btn" id="addTaskBtn" onclick="addTask()">+ Add Task</button>
   </div>
 
+  <!-- Dashboard -->
   <div class="card" style="grid-column:span 2;">
     <h2>📊 Dashboard</h2>
     <canvas id="taskChart"></canvas>
@@ -94,10 +100,10 @@ let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 // ===== DEMO DATA =====
 if(!localStorage.getItem("inventory")){
     inventory = [
-        {name:"Servo", qty:3},
-        {name:"Motor", qty:5},
-        {name:"Sensor", qty:7},
-        {name:"Battery", qty:2}
+        {name:"Servo", qty:3, max:10},
+        {name:"Motor", qty:5, max:10},
+        {name:"Sensor", qty:7, max:10},
+        {name:"Battery", qty:2, max:10}
     ];
     localStorage.setItem("inventory", JSON.stringify(inventory));
 }
@@ -144,13 +150,15 @@ const list = document.getElementById("inventoryList"); if(!list) return; list.in
 inventory.forEach((item, idx)=>{
 if(item.name.toLowerCase().includes(search)){
 const li = document.createElement("li");
+const progressPercent = Math.min(100, Math.floor((item.qty/item.max)*100));
+const progressBar = `<div class="progress"><div class="progress-bar" style="width:${progressPercent}%;background:${progressPercent<30?'#dc3545':progressPercent<70?'#ffc107':'#28a745'}"></div></div>`;
 let lowStock = item.qty<=2 ? " 🔴" : "";
-li.innerHTML=`${item.name} (Qty: ${item.qty})${lowStock} ${localStorage.getItem('role')==='teacher'? `<button onclick="deleteInventory(${idx})">Delete</button>`:""}`;
+li.innerHTML=`<div>${item.name} (Qty: ${item.qty})${lowStock}${progressBar}</div> ${localStorage.getItem('role')==='teacher'? `<button onclick="deleteInventory(${idx})">Delete</button>`:""}`;
 list.appendChild(li);
 }
 }); updateAlerts();
 }
-function addInventory(){ const name = prompt("Item name:"); const qty = parseInt(prompt("Quantity:"),10); if(name && !isNaN(qty)){ inventory.push({name,qty}); localStorage.setItem("inventory",JSON.stringify(inventory)); renderInventory(); showToast('Inventory added'); } }
+function addInventory(){ const name = prompt("Item name:"); const qty = parseInt(prompt("Quantity:"),10); const max = parseInt(prompt("Max quantity:"),10)||10; if(name && !isNaN(qty)){ inventory.push({name,qty,max}); localStorage.setItem("inventory",JSON.stringify(inventory)); renderInventory(); showToast('Inventory added'); } }
 function deleteInventory(i){ inventory.splice(i,1); localStorage.setItem("inventory",JSON.stringify(inventory)); renderInventory(); showToast('Inventory deleted'); }
 
 // ===== TASKS =====
@@ -163,10 +171,10 @@ if(t.text.toLowerCase().includes(search)){
 const priorityClass = t.priority==='High'? 'priority-high': t.priority==='Medium'? 'priority-medium':'priority-low';
 const role = localStorage.getItem('role');
 const username = localStorage.getItem('username');
-const studentButton = (role==='student' && username===t.assignee && !t.done)? `<button onclick="completeTask(${idx})">Mark Done</button>`:"";
-const teacherButtons = (role==='teacher')? `<button onclick="deleteTask(${idx})">Delete</button>`:"";
+const studentButton = (role==='student' && username===t.assignee && !t.done)? `<button onclick="completeTask(${idx})">✅</button>`:"";
+const teacherButtons = (role==='teacher')? `<button onclick="deleteTask(${idx})">❌</button>`:"";
 const dueText = t.due? ` | Due: ${t.due}`:"";
-const doneMark = t.done? " ✅":"";
+const doneMark = t.done? " ✔️":"";
 const li = document.createElement("li");
 li.dataset.index=idx;
 li.innerHTML=`<span class="${priorityClass}">${t.text} (assigned: ${t.assignee})${dueText}</span> ${teacherButtons} ${studentButton} ${doneMark}`;
@@ -248,5 +256,6 @@ window.onload = function(){
     }
 }
 </script>
+
 </body>
 </html>
