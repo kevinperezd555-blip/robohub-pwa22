@@ -3,34 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0d6efd">
 <title>RoboHub 🤖 Ultimate</title>
 <style>
-body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:#f5f6fa;color:#333;transition:0.3s;}
-header{background:#0d6efd;color:white;padding:18px;text-align:center;font-size:1.7em;font-weight:bold;box-shadow:0 3px 6px rgba(0,0,0,0.15);}
+:root{
+  --primary:#0d6efd; --bg:#f5f6fa; --text:#333; --dark-bg:#121212; --dark-text:#eee;
+  --success:#28a745; --warning:#ffc107; --danger:#dc3545;
+}
+body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);transition:0.3s;}
+body.dark{background:var(--dark-bg);color:var(--dark-text);}
+header{background:var(--primary);color:white;padding:18px;text-align:center;font-size:1.7em;font-weight:bold;box-shadow:0 3px 6px rgba(0,0,0,0.15);}
 #loginScreen{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:#e8f0fe;transition:0.3s;}
 #loginScreen input{margin:8px 0;padding:12px;width:260px;border:1px solid #ccc;border-radius:8px;font-size:1em;transition:0.3s;}
-button.action{margin-top:12px;padding:12px 20px;background:#0d6efd;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:bold;transition:0.3s;}
+button.action{margin-top:12px;padding:12px 20px;background:var(--primary);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:bold;transition:0.3s;}
 button.action:hover{background:#084298;transform:scale(1.05);}
 #mainApp{display:none;transition:0.3s;}
 .app{display:flex;min-height:100vh;transition:0.3s;}
 nav{width:220px;background:#212529;color:white;padding:20px;display:flex;flex-direction:column;gap:15px;transition:0.3s;}
 nav button{background:none;border:none;color:white;text-align:left;padding:12px;border-radius:6px;cursor:pointer;font-size:1.05em;transition:0.3s;}
 nav button:hover{background:#343a40;transform:scale(1.03);}
-.content{flex-grow:1;padding:25px;background:#f5f6fa;transition:0.3s;}
-h2{margin-top:0;color:#0d6efd;border-bottom:3px solid #0d6efd;padding-bottom:5px;transition:0.3s;}
+.content{flex-grow:1;padding:25px;background:var(--bg);transition:0.3s;}
+body.dark .content{background:#1c1c1c;}
+h2{margin-top:0;color:var(--primary);border-bottom:3px solid var(--primary);padding-bottom:5px;transition:0.3s;}
 ul{list-style:none;padding:0;}
 li{background:white;margin:10px 0;padding:14px;border-radius:10px;box-shadow:0 3px 6px rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;cursor:grab;transition:0.3s;}
+body.dark li{background:#2a2a2a;}
 li:hover{transform:scale(1.03);box-shadow:0 6px 12px rgba(0,0,0,0.15);}
 li.completed{text-decoration:line-through;color:gray;opacity:0.7;}
 .btns button{margin-left:6px;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:0.9em;transition:0.3s;}
 .edit{background:#ffc107;color:black;} .delete{background:#dc3545;color:white;}
 .edit:hover{background:#e0a800;transform:scale(1.1);} .delete:hover{background:#c82333;transform:scale(1.1);}
 .section{display:none;transition:0.3s;}
-.welcome{margin:15px 0;font-size:1.3em;font-weight:bold;color:#0d6efd;background:white;padding:15px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.welcome{margin:15px 0;font-size:1.3em;font-weight:bold;color:var(--primary);background:white;padding:15px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+body.dark .welcome{background:#2a2a2a;color:var(--text);}
 .columns{display:flex;gap:20px;flex-wrap:wrap;transition:0.3s;}
 .column{flex:1;background:#f8f9fa;padding:12px;border-radius:10px;min-height:320px;transition:0.3s;}
+body.dark .column{background:#2a2a2a;}
 .column h3{text-align:center;margin-bottom:10px;}
+.badge{padding:2px 6px;border-radius:6px;font-size:0.8em;color:white;margin-left:6px;}
+.high{background:#dc3545;} .medium{background:#ffc107;color:black;} .low{background:#28a745;}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--primary);color:white;padding:12px 20px;border-radius:8px;opacity:0;transition:0.5s;z-index:1000;}
+body.dark .toast{background:#084298;}
 @media(max-width:900px){.app{flex-direction:column;} nav{width:100%;flex-direction:row;overflow-x:auto;} nav button{flex:1;text-align:center;}}
 </style>
 </head>
@@ -50,16 +62,20 @@ li.completed{text-decoration:line-through;color:gray;opacity:0.7;}
 <button onclick="showSection('inventory')">📦 Inventory</button>
 <button onclick="showSection('tasks')">📝 Tasks</button>
 <button onclick="showSection('profile')">👤 Profile</button>
+<button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+<button onclick="resetData()">🔄 Reset Data</button>
 </nav>
 <div class="content">
 <div id="inventory" class="section">
 <h2>📦 Inventory</h2>
+<input type="text" id="searchInventory" placeholder="Search Inventory" oninput="filterInventory()">
 <ul id="inventoryList"></ul>
 <button class="action" onclick="addInventory()">Add Inventory</button>
 </div>
 
 <div id="tasks" class="section">
 <h2>📝 Task Board</h2>
+<input type="text" id="searchTasks" placeholder="Search Tasks" oninput="filterTasks()">
 <div class="columns">
 <div class="column">
 <h3>To Do</h3>
@@ -86,54 +102,61 @@ li.completed{text-decoration:line-through;color:gray;opacity:0.7;}
 </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-const loginScreen = document.getElementById('loginScreen');
-const mainApp = document.getElementById('mainApp');
-const inventoryList = document.getElementById('inventoryList');
-const todoList = document.getElementById('todoList');
-const inProgressList = document.getElementById('inProgressList');
-const doneList = document.getElementById('doneList');
+const loginScreen=document.getElementById('loginScreen');
+const mainApp=document.getElementById('mainApp');
+const inventoryList=document.getElementById('inventoryList');
+const todoList=document.getElementById('todoList');
+const inProgressList=document.getElementById('inProgressList');
+const doneList=document.getElementById('doneList');
+let inventory=JSON.parse(localStorage.getItem('inventory'))||{Servo:3,Motor:5,Sensors:7};
+let tasks=JSON.parse(localStorage.getItem('tasks'))||[];
+let darkMode=localStorage.getItem('darkMode')==='true';
 
-let inventory = JSON.parse(localStorage.getItem('inventory')) || { Servo: 3, Motor: 5, Sensors: 7 };
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+// Save
+function saveData(){localStorage.setItem('inventory',JSON.stringify(inventory));localStorage.setItem('tasks',JSON.stringify(tasks));}
 
-// Save inventory and tasks
-function saveData() {
-  localStorage.setItem('inventory', JSON.stringify(inventory));
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-}
+// Toast
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';setTimeout(()=>{t.style.opacity='0'},1500);}
+
+// Dark mode
+function toggleDarkMode(){document.body.classList.toggle('dark');darkMode=document.body.classList.contains('dark');localStorage.setItem('darkMode',darkMode);}
 
 // Inventory UI
-function updateInventoryUI() {
-  inventoryList.innerHTML = '';
-  for (let item in inventory) {
-    const li = document.createElement('li');
-    li.textContent = `${item}: ${inventory[item]}`;
-    const btns = document.createElement('div');
-    btns.className = 'btns';
-    btns.innerHTML = `<button class="edit" onclick="editInventory('${item}')">Edit</button>
-                      <button class="delete" onclick="deleteInventory('${item}')">Delete</button>`;
-    li.appendChild(btns);
-    inventoryList.appendChild(li);
+function updateInventoryUI(){
+  const search=document.getElementById('searchInventory').value.toLowerCase();
+  inventoryList.innerHTML='';
+  for(let item in inventory){
+    if(!item.toLowerCase().includes(search)) continue;
+    const li=document.createElement('li');
+    li.textContent=`${item}: ${inventory[item]}`;
+    if(inventory[item]<3){li.style.color='red';}
+    const btns=document.createElement('div');btns.className='btns';
+    btns.innerHTML=`<button class="edit" onclick="editInventory('${item}')">Edit</button>
+    <button class="delete" onclick="deleteInventory('${item}')">Delete</button>`;
+    li.appendChild(btns);inventoryList.appendChild(li);
   }
 }
 
-// Tasks UI
-function updateTasksUI() {
-  todoList.innerHTML = '';
-  inProgressList.innerHTML = '';
-  doneList.innerHTML = '';
-  tasks.forEach((task, index) => {
-    const li = document.createElement('li');
-    li.textContent = task.name;
-    li.setAttribute('draggable','true');
-    li.setAttribute('id','task-'+index);
-    li.ondragstart = (e) => { e.dataTransfer.setData('text', index); e.target.style.opacity='0.5'; };
-    li.ondragend = (e) => { e.target.style.opacity='1'; };
-    const btns = document.createElement('div');
-    btns.className = 'btns';
-    btns.innerHTML = `<button class="edit" onclick="editTask(${index})">Edit</button>
-                      <button class="delete" onclick="deleteTask(${index})">Delete</button>`;
+// Task UI
+function updateTasksUI(){
+  const search=document.getElementById('searchTasks').value.toLowerCase();
+  todoList.innerHTML='';inProgressList.innerHTML='';doneList.innerHTML='';
+  tasks.forEach((task,index)=>{
+    if(!task.name.toLowerCase().includes(search)) return;
+    const li=document.createElement('li');
+    li.textContent=task.name;
+    const badge=document.createElement('span');badge.className='badge '+task.priority;badge.textContent=task.priority.charAt(0).toUpperCase()+task.priority.slice(1);
+    li.appendChild(badge);
+    if(task.due) li.append(' 📅'+task.due);
+    li.setAttribute('draggable','true');li.setAttribute('id','task-'+index);
+    li.ondragstart=e=>{e.dataTransfer.setData('text',index);e.target.style.opacity='0.5';};
+    li.ondragend=e=>{e.target.style.opacity='1';};
+    const btns=document.createElement('div');btns.className='btns';
+    btns.innerHTML=`<button class="edit" onclick="editTask(${index})">Edit</button>
+    <button class="delete" onclick="deleteTask(${index})">Delete</button>`;
     li.appendChild(btns);
     if(task.status==='todo') todoList.appendChild(li);
     else if(task.status==='inprogress') inProgressList.appendChild(li);
@@ -142,50 +165,25 @@ function updateTasksUI() {
 }
 
 // Show section
-function showSection(section) {
-  document.querySelectorAll('.section').forEach(div => div.style.display='none');
-  document.getElementById(section).style.display='block';
-}
+function showSection(s){document.querySelectorAll('.section').forEach(div=>div.style.display='none');document.getElementById(s).style.display='block';}
 
-// Login: accept anything
-function signIn() {
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value.trim();
-  if(username){
-    localStorage.setItem('username', username);
-    loginScreen.style.display='none';
-    mainApp.style.display='flex';
-    document.getElementById('welcomeMsg').textContent = `Welcome, ${username}!`;
-    updateInventoryUI();
-    updateTasksUI();
-    showSection('inventory');
-  } else {
-    alert('Please enter a username');
-  }
+// Login
+function signIn(){
+  const username=document.getElementById('username').value.trim();
+  if(username){localStorage.setItem('username',username);loginScreen.style.display='none';mainApp.style.display='flex';
+    document.getElementById('welcomeMsg').textContent=`Welcome, ${username}!`;updateInventoryUI();updateTasksUI();showSection('inventory');showToast('Logged in');}
+  else alert('Enter username');
 }
 
 // Logout
-function logOut() {
-  localStorage.removeItem('username');
-  loginScreen.style.display='flex';
-  mainApp.style.display='none';
-}
+function logOut(){localStorage.removeItem('username');loginScreen.style.display='flex';mainApp.style.display='none';showToast('Logged out');}
 
-// Inventory functions
-function addInventory() { 
-  const item = prompt('Item name'); 
-  const qty = parseInt(prompt('Quantity'),10); 
-  if(item && !isNaN(qty)){ inventory[item] = qty; saveData(); updateInventoryUI(); } 
-}
+// Inventory
+function addInventory(){const item=prompt('Item name');const qty=parseInt(prompt('Quantity'),10);if(item&&!isNaN(qty)){inventory[item]=qty;saveData();updateInventoryUI();showToast('Inventory added');}}
+function editInventory(item){const qty=parseInt(prompt('Edit quantity for '+item,inventory[item]),10);if(!isNaN(qty)){inventory[item]=qty;saveData();updateInventoryUI();showToast('Inventory updated');}}
+function deleteInventory(item){if(confirm('Delete '+item+'?')){delete inventory[item];saveData();updateInventoryUI();showToast('Inventory deleted');}}
 
-function editInventory(item) { 
-  const newQty = parseInt(prompt(`Edit quantity for ${item}:`, inventory[item]),10); 
-  if(!isNaN(newQty)){ inventory[item] = newQty; saveData(); updateInventoryUI(); } 
-}
-
-function deleteInventory(item) { 
-  if(confirm(`Delete ${item}?`)){ delete inventory[item]; saveData(); updateInventoryUI(); } 
-}
-
-// Task functions
-function add
+// Tasks
+function addTask(){
+  const name=prompt('Task name');if(!name)return;
+  let priority=prompt('Priority (High, Medium, Low)','Medium');priority=priority.toLowerCase();
